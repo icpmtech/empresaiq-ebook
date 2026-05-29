@@ -4,6 +4,7 @@ import Link from '@docusaurus/Link';
 import styles from './comprar.module.css';
 
 const PAYPAL_URL = 'https://www.paypal.com/ncp/payment/6TSXLY9DJPM3L';
+const RETURN_URL = 'https://empresaiq-ebook.vercel.app/codigo';
 const QR_IMG = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https%3A%2F%2Fwww.paypal.com%2Fncp%2Fpayment%2F6TSXLY9DJPM3L&bgcolor=ffffff&color=1d2951&margin=10';
 
 export default function Comprar(): React.JSX.Element {
@@ -109,11 +110,16 @@ export default function Comprar(): React.JSX.Element {
               </a>
 
               <p className={styles.secureNote}>
-                🔒 Pagamento seguro · Recebes o link do PDF após pagamento
+                🔒 Pagamento seguro · Após pagar és redirecionado para{' '}
+                <a href={RETURN_URL} style={{color: 'inherit', fontWeight: 700}}>/codigo</a>{' '}
+                com o teu download imediato
               </p>
 
               <div className={styles.alreadyHave}>
-                <Link to="/aceder">Já tenho um código de acesso →</Link>
+                <Link to="/codigo">Já paguei — ver o meu código →</Link>
+              </div>
+              <div className={styles.alreadyHave}>
+                <Link to="/aceder">Tenho código de acesso →</Link>
               </div>
             </div>
           </div>
@@ -123,7 +129,11 @@ export default function Comprar(): React.JSX.Element {
             <span className={styles.guaranteeIcon}>📘</span>
             <div>
               <strong>Acesso imediato após pagamento</strong>
-              <p>Após confirmação do PayPal és redirecionado para a página de download. Guarda o link — é para sempre.</p>
+              <p>
+                O PayPal redireciona-te automaticamente para{' '}
+                <a href={RETURN_URL} style={{fontWeight: 700}}>empresaiq-ebook.vercel.app/codigo</a>{' '}
+                com o botão de download e o teu código de acesso permanente.
+              </p>
             </div>
           </div>
 
