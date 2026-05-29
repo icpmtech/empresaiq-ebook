@@ -1,0 +1,240 @@
+/* ─── Obrigado Page ────────────────────────────────────────────── */
+
+.main {
+  background: var(--ifm-background-color);
+  padding: 3rem 1.5rem 4rem;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+/* ─── Header ───────────────────────────────────────────────────── */
+
+.header {
+  text-align: center;
+  padding: 1rem 0 0.5rem;
+}
+
+.checkIcon {
+  font-size: 4rem;
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  font-family: var(--ifm-heading-font-family);
+  color: var(--oreilly-navy);
+  font-size: 2rem;
+  margin: 0 0 0.6rem;
+}
+
+[data-theme='dark'] .title {
+  color: var(--ifm-heading-color);
+}
+
+.sub {
+  color: #555;
+  font-size: 1rem;
+  margin: 0;
+}
+
+[data-theme='dark'] .sub {
+  color: #aaa;
+}
+
+/* ─── Download Card ────────────────────────────────────────────── */
+
+.downloadCard {
+  background: #f0faf0;
+  border: 2px solid #27ae60;
+  border-radius: 8px;
+  padding: 1.8rem 2rem;
+  text-align: center;
+}
+
+[data-theme='dark'] .downloadCard {
+  background: #1a2e1a;
+  border-color: #27ae60;
+}
+
+.cardTitle {
+  font-family: var(--ifm-heading-font-family);
+  color: #1e7e34;
+  margin: 0 0 0.5rem;
+  font-size: 1.3rem;
+}
+
+[data-theme='dark'] .cardTitle {
+  color: #4cae6a;
+}
+
+.cardSub {
+  color: #555;
+  font-size: 0.9rem;
+  margin-bottom: 1.2rem;
+}
+
+[data-theme='dark'] .cardSub {
+  color: #aaa;
+}
+
+.downloadBtn {
+  display: inline-block;
+  padding: 0.9rem 2rem;
+  background: #27ae60;
+  color: #fff !important;
+  font-family: var(--ifm-heading-font-family);
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 4px;
+  text-decoration: none !important;
+  transition: background 0.2s;
+}
+
+.downloadBtn:hover {
+  background: #219a52;
+  color: #fff !important;
+}
+
+/* ─── Code Card ────────────────────────────────────────────────── */
+
+.codeCard {
+  background: var(--oreilly-note-bg);
+  border: 1px solid var(--oreilly-rule);
+  border-left: 4px solid var(--oreilly-orange);
+  border-radius: 6px;
+  padding: 1.5rem 2rem;
+  text-align: center;
+}
+
+.codeTitle {
+  font-family: var(--ifm-heading-font-family);
+  color: var(--oreilly-navy);
+  font-size: 1.2rem;
+  margin: 0 0 0.5rem;
+}
+
+[data-theme='dark'] .codeTitle {
+  color: var(--ifm-heading-color);
+}
+
+.codeSub {
+  color: #666;
+  font-size: 0.88rem;
+  margin-bottom: 1rem;
+}
+
+[data-theme='dark'] .codeSub {
+  color: #aaa;
+}
+
+.codeBox {
+  background: var(--oreilly-navy);
+  border-radius: 4px;
+  padding: 0.8rem 1.5rem;
+  display: inline-block;
+  margin-bottom: 0.8rem;
+}
+
+.code {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 1.3rem;
+  color: var(--oreilly-orange);
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.codeHint {
+  font-size: 0.85rem;
+  color: #777;
+  margin: 0;
+}
+
+[data-theme='dark'] .codeHint {
+  color: #aaa;
+}
+
+/* ─── Included ─────────────────────────────────────────────────── */
+
+.included {
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--oreilly-rule);
+  border-radius: 6px;
+  padding: 1.5rem 2rem;
+}
+
+.includedTitle {
+  font-family: var(--ifm-heading-font-family);
+  color: var(--oreilly-navy);
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 1rem;
+}
+
+[data-theme='dark'] .includedTitle {
+  color: var(--ifm-heading-color);
+}
+
+.includedGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 480px) {
+  .includedGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.includedItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.includedItem strong {
+  font-size: 0.95rem;
+  color: var(--oreilly-navy);
+}
+
+[data-theme='dark'] .includedItem strong {
+  color: var(--ifm-heading-color);
+}
+
+.includedItem span {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+/* ─── Read Online ──────────────────────────────────────────────── */
+
+.readOnline {
+  text-align: center;
+  padding: 0.5rem 0;
+}
+
+.readOnline p {
+  color: #888;
+  font-size: 0.88rem;
+  margin: 0 0 0.4rem;
+}
+
+.readLink {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.readLink:hover {
+  text-decoration: underline;
+}

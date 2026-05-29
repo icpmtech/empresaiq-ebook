@@ -74,6 +74,16 @@ const config: Config = {
           label: '📖 eBook',
         },
         {
+          to: '/comprar',
+          label: '🛒 Comprar PDF — €10',
+          position: 'left',
+        },
+        {
+          to: '/aceder',
+          label: '🔑 Aceder',
+          position: 'right',
+        },
+        {
           href: 'https://empresa.market-pro.digital/',
           label: 'empresa.market-pro.digital',
           position: 'right',
@@ -90,6 +100,13 @@ const config: Config = {
             { label: 'Porque IA Local', to: '/docs/porque-ia-local' },
             { label: 'Instalação do Ambiente', to: '/docs/instalacao-ambiente' },
             { label: 'Construção do Agente', to: '/docs/construcao-agente' },
+          ],
+        },
+        {
+          title: 'eBook PDF',
+          items: [
+            { label: '🛒 Comprar — €10', to: '/comprar' },
+            { label: '🔑 Aceder com código', to: '/aceder' },
           ],
         },
         {

@@ -48,6 +48,12 @@ function HomepageHeader() {
             to="/docs/introducao">
             📖 Começar a Ler
           </Link>
+          <Link
+            className="button button--lg"
+            to="/comprar"
+            style={{background: 'var(--oreilly-orange)', color: '#fff', borderColor: 'transparent', marginLeft: '1rem'}}>
+            🛒 Comprar PDF — €10
+          </Link>
         </div>
       </div>
     </header>
