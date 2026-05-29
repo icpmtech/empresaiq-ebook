@@ -14,7 +14,7 @@ const config: Config = {
     v4: true, // Improve compatibility with the upcoming Docusaurus v4
   },
 
-  url: 'https://empresaiq.pt',
+  url: 'https://empresa.market-pro.digital',
   baseUrl: '/',
 
   organizationName: 'EmpresaIQ',
@@ -74,8 +74,8 @@ const config: Config = {
           label: '📖 eBook',
         },
         {
-          href: 'https://empresaiq.pt',
-          label: 'empresaiq.pt',
+          href: 'https://empresa.market-pro.digital/',
+          label: 'empresa.market-pro.digital',
           position: 'right',
         },
       ],
@@ -95,7 +95,7 @@ const config: Config = {
         {
           title: 'EmpresaIQ',
           items: [
-            { label: 'Website', href: 'https://empresaiq.pt' },
+            { label: 'Website', href: 'https://empresa.market-pro.digital/' },
           ],
         },
       ],
