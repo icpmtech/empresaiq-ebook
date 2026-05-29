@@ -1,0 +1,10 @@
+# EmpresaIQ Agent — Dependências Python
+# Instalar com: pip install -r requirements.txt
+
+langchain>=0.3.0
+langchain-community>=0.3.0
+langchain-openai>=0.2.0
+openai>=1.40.0
+requests>=2.31.0
+gradio>=4.44.0
+python-dotenv>=1.0.0

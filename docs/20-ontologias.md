@@ -1,24 +1,222 @@
 ---
 sidebar_position: 19
 title: "19. Ontologias e Estrutura de Conhecimento"
-description: "Ontologias e estrutura de conhecimento no agente EmpresaIQ"
+description: "Dar ao EmpresaIQ uma estrutura lógica do mundo empresarial — entidades, relações e regras"
 ---
 
-# Capítulo 19 — Ontologias e Estrutura de Conhecimento no Agente EmpresaIQ
+# Ontologias e Estrutura de Conhecimento
+
+> *"Memória permite ao agente lembrar. Conhecimento permite ao agente compreender. A ontologia é o mapa que transforma dados soltos em inteligência estruturada."*
+
+---
+
+## O problema: dados sem estrutura
+
+Sem ontologia, quando o EmpresaIQ lê este texto:
+
+> "A EmpresaIQ forneceu software ao contrato público B por 120.000€"
+
+...o modelo interpreta-o como texto. Não "sabe" que:
+- **EmpresaIQ** é uma empresa (entidade)
+- **software** é um serviço (tipo)
+- **contrato público B** é um objecto legal com regras próprias
+- **120.000€** é um valor financeiro com implicações fiscais
+
+Uma ontologia dá ao agente esse esqueleto lógico.
 
 ```mermaid
 graph TD
-    Ontologia[Ontologia EmpresaIQ] --> Empresa[Empresa]
-    Ontologia --> Contrato[Contrato Público]
-    Ontologia --> Servico[Serviço]
-    Empresa -->|fornece| Servico
-    Contrato -->|pertence a| Estado[Estado]
-    Contrato -->|usa| Servico
-    Servico -->|tem| Preco[Preço]
-    style Ontologia fill:#FF8C00,color:#fff
-    style Empresa fill:#1D2951,color:#fff
-    style Contrato fill:#2E7D32,color:#fff
+    O["🗒️ Ontologia EmpresaIQ"] --> E["Empresa"]
+    O --> C["Contrato Público"]
+    O --> S["Serviço"]
+    E -->|"fornece"| S
+    C -->|"pertence a"| EST["Estado"]
+    C -->|"usa"| S
+    S -->|"tem"| P["Preço"]
+    style O fill:#FF8C00,color:#fff
+    style E fill:#1D2951,color:#fff
+    style C fill:#2E7D32,color:#fff
 ```
+
+---
+
+## O que é uma ontologia
+
+Uma ontologia é uma representação formal de conhecimento com três componentes:
+
+### Entidades (o que existe)
+- Empresas, Contratos, Serviços, Clientes, Projectos, Documentos
+
+### Relações (como se ligam)
+- Empresa **fornece** Serviço
+- Cliente **contrata** Serviço
+- Contrato **pertence a** Estado
+- Projecto **inclui** Contrato
+
+### Regras (o que é permitido)
+- Um contrato tem sempre uma entidade adjudicante
+- Um serviço tem sempre um preço associado
+- Uma empresa pode ter múltiplos contratos
+
+---
+
+## Ontologia vs Memória vs RAG
+
+| Sistema | Função | Analogia |
+|---|---|---|
+| Memória | Lembrar interações | Diário de bordo |
+| RAG | Recuperar documentos | Biblioteca de pesquisa |
+| **Ontologia** | Estruturar conhecimento | **Mapa conceptual** |
+
+Os três sistemas são complementares. A ontologia é o esqueleto lógico que dá sentido ao que a memória lembra e o RAG recupera.
+
+---
+
+## Implementação prática — Começar simples
+
+Para o EmpresaIQ, a ontologia mais simples possível é um dicionário Python:
+
+```python title="ontologia_empresaiq.py"
+# Ontologia EmpresaIQ v1 — estrutura mínima
+
+ontologia = {
+    "entidades": {
+        "empresas": ["EmpresaIQ"],
+        "servicos": ["software", "consultoria", "cibersegurança", "formação"],
+        "tipos_contrato": ["publico", "privado", "framework"]
+    },
+    "relacoes": {
+        "EmpresaIQ": {
+            "fornece": ["software", "consultoria", "cibersegurança", "formação"]
+        }
+    },
+    "regras": {
+        "contrato_publico": [
+            "tem_entidade_adjudicante",
+            "publicado_no_portal_base",
+            "sujeito_a_iva_23"
+        ]
+    }
+}
+
+
+def classificar_entidade(texto: str) -> str:
+    """Identifica o tipo de entidade num texto."""
+    texto_lower = texto.lower()
+    for servico in ontologia["entidades"]["servicos"]:
+        if servico in texto_lower:
+            return f"servico:{servico}"
+    for empresa in ontologia["entidades"]["empresas"]:
+        if empresa.lower() in texto_lower:
+            return f"empresa:{empresa}"
+    return "entidade:desconhecida"
+
+
+# Exemplo de uso
+print(classificar_entidade("preço da consultoria"))  # servico:consultoria
+print(classificar_entidade("contrato EmpresaIQ"))    # empresa:EmpresaIQ
+```
+
+---
+
+## Integrar a ontologia no agente
+
+A ontologia pode ser usada como contexto adicional no prompt do agente:
+
+```python title="agente_com_ontologia.py (fragmento)"
+from ontologia_empresaiq import ontologia
+
+# Gerar descrição concisa da ontologia para o prompt
+def ontologia_para_prompt() -> str:
+    servicos = ", ".join(ontologia["entidades"]["servicos"])
+    return f"""
+Estrutura de conhecimento EmpresaIQ:
+- Serviços disponíveis: {servicos}
+- Tipos de contrato: público, privado, framework
+- Regra: contratos públicos estão sujeitos a IVA 23%
+"""
+
+# Incluir no template do agente
+template = f"""
+Sés o Agente EmpresaIQ.
+{ontologia_para_prompt()}
+
+Ferramentas: {{tools}}
+Pergunta: {{input}}
+Thought: {{agent_scratchpad}}
+"""
+```
+
+---
+
+## Representação visual da ontologia EmpresaIQ
+
+```
+[EmpresaIQ]
+    ├── fornece → [Software]
+    ├── fornece → [Consultoria IA]
+    └── oferece → [Cibersegurança]
+
+[Contrato Público]
+    ├── pertence a → [Estado Português]
+    ├── usa → [Software]
+    └── valor → [Preço + IVA 23%]
+
+[Cliente]
+    ├── contrata → [Serviço]
+    └── paga → [Factura]
+```
+
+---
+
+## Evolução futura: Graph Database
+
+Para empresas com estruturas de dados mais complexas, a próxima evolução é usar uma base de dados de grafo como **Neo4j**:
+
+```python
+# Exemplo conceptual — Neo4j com Python
+from neo4j import GraphDatabase
+
+driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "password"))
+
+with driver.session() as session:
+    # Criar relação na ontologia
+    session.run(
+        "MERGE (e:Empresa {nome: $empresa}) "
+        "MERGE (s:Servico {nome: $servico}) "
+        "MERGE (e)-[:FORNECE]->(s)",
+        empresa="EmpresaIQ", servico="Software"
+    )
+```
+
+---
+
+## Benefícios reais da ontologia no EmpresaIQ
+
+| Sem ontologia | Com ontologia |
+|---|---|
+| Respostas genéricas do LLM | Respostas baseadas em estrutura real |
+| Confunde serviços com empresas | Identifica correctamente cada entidade |
+| Inventa relações | Segue relações definidas explicitamente |
+| Escalabilidade limitada | Cresce para sistemas complexos |
+
+---
+
+## Resumo
+
+Neste capítulo:
+- Percebemos o que é uma ontologia e porque transforma um chatbot num sistema de inteligência estruturada
+- Criamos uma ontologia mínima para o EmpresaIQ em Python
+- Integrámos a ontologia no prompt do agente
+- Exploramós a evolução para Neo4j em versões mais avançadas
+
+Numa única frase: **Memória = experiência | RAG = conhecimento | Ontologia = estrutura**.
+
+No último capítulo, fazemos um balanço completo do que construiu ao longo deste livro.
+
+---
+
+*Capítulo seguinte: [20. Conclusão →](./conclusao)*
 
 ## 19.1 Introdução
 

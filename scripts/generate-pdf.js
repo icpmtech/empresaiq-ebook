@@ -32,7 +32,8 @@ const CHAPTERS = [
   { slug: 'melhorias-futuras',     title: '16. Melhorias Futuras' },
   { slug: 'qwen-agente',           title: '17. Qwen2.5 no Agente' },
   { slug: 'memoria-conversacional',title: '18. Memória Conversacional' },
-  { slug: 'conclusao',             title: '19. Conclusão' },
+  { slug: 'ontologias',            title: '19. Ontologias e Estrutura de Conhecimento' },
+  { slug: 'conclusao',             title: '20. Conclusão' },
 ];
 
 // CSS injectado para esconder elementos de navegação no PDF
