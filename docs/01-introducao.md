@@ -18,7 +18,7 @@ Isso é exactamente o que vamos construir juntos neste livro.
 
 Nos últimos anos, ferramentas como o ChatGPT e o Google Gemini tornaram a IA acessível a toda a gente. Mas há um problema: **os seus dados saem do seu computador**. Contratos, propostas, dados de clientes, informação confidencial — tudo vai para servidores de outras empresas, noutros países, sujeitos a políticas que mudam sem aviso.
 
-Existe uma alternativa. Com os avanços recentes em modelos de linguagem *open source* e em ferramentas como o **llama.cpp**, hoje é possível correr um agente de IA genuinamente inteligente num PC normal com apenas 8 GB de RAM — sem GPU, sem cloud, sem custos recorrentes.
+Existe uma alternativa. Com os avanços recentes em modelos de linguagem *open source* e em ferramentas como o **Ollama**, hoje é possível correr um agente de IA genuinamente inteligente num PC normal com apenas 8 GB de RAM — sem GPU, sem cloud, sem custos recorrentes.
 
 **Este livro mostra-lhe como fazer isso**, passo a passo, mesmo que nunca tenha trabalhado com IA antes.
 
@@ -38,7 +38,7 @@ graph TD
         A --> T2[🔧 Ferramenta: Pesquisa]
         A --> T3[🔧 Ferramenta: Base de Dados]
         A --> LLM[Motor de IA]
-        LLM --> M[Modelo GGUF Local]
+        LLM --> M["Modelo empresaiq\n(Qwen2.5-3B)"]
     end
     M --> R[💬 Resposta Final]
     R --> U
@@ -51,8 +51,8 @@ O sistema final terá:
 
 | Componente | O que faz | Quando é construído |
 |---|---|---|
-| **Motor de IA (llama.cpp)** | Corre o modelo de linguagem em CPU | Caps. 8–9 |
-| **Modelo Phi-3-mini ou Qwen2.5** | O "cérebro" do agente | Cap. 9 |
+| **Motor de IA (Ollama)** | Servidor local que corre o modelo de linguagem | Caps. 8–9 |
+| **Modelo empresaiq (Qwen2.5-3B)** | O "cérebro" do agente, personalizado para o EmpresaIQ | Cap. 9 |
 | **Ferramentas** | Permitem ao agente agir no mundo real | Cap. 10 |
 | **Agente ReAct** | Raciocina e decide que ferramentas usar | Cap. 11 |
 | **Interface de Chat** | Conversa em tempo real com o agente | Cap. 13 |
@@ -73,7 +73,7 @@ Antes de instalar qualquer coisa, vamos perceber os conceitos. O que é um agent
 ### Parte II — Instalação e Configuração (Caps. 6–9)
 *"Preparar o terreno para o EmpresaIQ"*
 
-Vamos instalar o Python, configurar o ambiente de desenvolvimento, instalar o llama.cpp (o motor que corre os modelos) e descarregar o modelo de IA. No final desta parte, o motor do EmpresaIQ estará a funcionar.
+Vamos instalar o Python, configurar o ambiente de desenvolvimento, instalar o Ollama (o servidor local de IA) e criar o modelo EmpresaIQ personalizado. No final desta parte, o motor do EmpresaIQ estará a funcionar.
 
 ### Parte III — Construção do Agente (Caps. 10–12)
 *"Dar vida ao EmpresaIQ"*

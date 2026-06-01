@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     print("\n" + "="*50)
     print("  AGENTE EMPRESAIQ — IA LOCAL")
-    print("  Modelo: Phi-3-mini Q4 | Apenas CPU")
+    print("  Modelo: empresaiq (Qwen2.5-3B) | Ollama")
     print("="*50)
     print("Escreva 'sair' para terminar.\n")
 
@@ -83,17 +83,18 @@ Agora o agente fica activo até escrever `sair`.
 O agente base não se lembra das mensagens anteriores — cada pergunta é tratada de forma independente. Para adicionar memória de curto prazo:
 
 ```python title="agente_com_memoria.py"
-from langchain_community.llms import LlamaCpp
+from langchain_ollama import OllamaLLM
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain_core.prompts import PromptTemplate
 from langchain.memory import ConversationBufferWindowMemory
 
 from tools import consultar_portfolio_empresaiq, consultar_portal_base, calcular_iva
 
-# Carregar modelo (mesmo do cap. 11)
-llm = LlamaCpp(
-    model_path="./Phi-3-mini-4k-instruct-Q4_K_M.gguf",
-    n_ctx=2048, n_threads=4, temperature=0.1, verbose=False
+# Ligar ao modelo via Ollama
+llm = OllamaLLM(
+    model="empresaiq",
+    base_url="http://localhost:11434",
+    temperature=0.1
 )
 
 # Memória das últimas 3 trocas (mais aumenta o consumo de contexto)
@@ -259,16 +260,13 @@ O EmpresaIQ está agora conversável de várias formas. No próximo capítulo, v
 ---
 
 *Capítulo seguinte: [14. Automatização por Hora →](./automatizacao)*
-## Chat Simples em Terminal
-
-Adicione um loop de conversação ao `agente_local.py`:
 
 ```python title="interface de chat — adicionar ao agente_local.py"
 if __name__ == "__main__":
 
     print("\n" + "="*50)
     print("  AGENTE EMPRESAIQ — IA LOCAL")
-    print("  Modelo: Phi-3-mini Q4 | CPU Only")
+    print("  Modelo: empresaiq (Qwen2.5-3B) | Ollama")
     print("="*50)
     print("Escreva 'sair' para terminar.\n")
 

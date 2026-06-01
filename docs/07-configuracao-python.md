@@ -19,6 +19,154 @@ O gestor de pacotes do Python chama-se **pip**. Com um simples comando, ele desc
 ```mermaid
 graph LR
     A["📄 requirements.txt\nLista de pacotes"] -->|pip install -r| B["🔧 pip"]
+    B --> C["🐍 ollama\nCliente Python para Ollama"]
+    B --> D["🔗 LangChain + langchain-ollama\nFramework do agente"]
+    B --> E["🌐 requests\nChamadas HTTP"]
+    C & D & E --> F["✅ EmpresaIQ pronto"]
+    style F fill:#2E7D32,color:#fff
+```
+
+---
+
+## Passo 1 — Criar o ficheiro requirements.txt
+
+Na pasta `empresaiq-agent` (com o ambiente virtual activo), crie um ficheiro chamado `requirements.txt` com o seguinte conteúdo:
+
+```txt title="requirements.txt"
+ollama>=0.3.0
+langchain>=0.2.0
+langchain-ollama>=0.1.0
+langchain-community>=0.2.0
+requests>=2.31.0
+```
+
+### O que cada pacote faz
+
+| Pacote | Função no EmpresaIQ |
+|---|---|
+| **ollama** | Cliente Python oficial para comunicar com o servidor Ollama local. Permite enviar perguntas ao modelo e receber respostas. |
+| **langchain** | O framework que fornece a estrutura para construir o agente, definir ferramentas e orquestrar o raciocínio ReAct. |
+| **langchain-ollama** | Integração oficial do LangChain com o Ollama — fornece o `OllamaLLM` e o `ChatOllama`. |
+| **langchain-community** | Extensões comunitárias do LangChain — ferramentas de memória, vectorstores e outros utilitários. |
+| **requests** | Biblioteca para fazer pedidos HTTP — usada pelas ferramentas do agente que acedem à web. |
+
+:::info Versões mínimas em vez de versões fixas
+Usamos versões mínimas (`>=`) para manter compatibilidade com actualizações recentes. O `ollama` e o `langchain-ollama` têm evoluído rapidamente com novas funcionalidades.
+:::
+
+---
+
+## Passo 2 — Instalar as dependências
+
+Com o ambiente virtual activo, execute:
+
+```bash
+pip install -r requirements.txt
+```
+
+:::tip Instalação rápida
+Ao contrário de bibliotecas que compilam código C++, os pacotes do Ollama são Python puro. A instalação demora menos de um minuto.
+:::
+
+---
+
+## Passo 3 — Verificar a instalação
+
+Após a instalação, confirme que tudo funcionou:
+
+```bash
+python -c "import ollama; print('ollama: OK')"
+python -c "from langchain_ollama import OllamaLLM; print('langchain-ollama: OK')"
+python -c "from langchain.agents import tool; print('LangChain: OK')"
+python -c "import requests; print('requests: OK')"
+```
+
+Se os quatro comandos mostrarem `OK`, está pronto para continuar.
+
+---
+
+## Passo 4 — Testar a ligação ao Ollama
+
+Confirme que o Python consegue comunicar com o servidor Ollama (que deve estar a correr do capítulo anterior):
+
+```python title="testar_ollama.py"
+import ollama
+
+# Listar modelos disponíveis
+modelos = ollama.list()
+print("Modelos instalados:")
+for modelo in modelos['models']:
+    print(f"  - {modelo['name']}")
+
+# Testar uma pergunta simples
+resposta = ollama.chat(
+    model='qwen2.5:3b',
+    messages=[{'role': 'user', 'content': 'Responde apenas: olá!'}]
+)
+print(f"\nResposta do modelo: {resposta['message']['content']}")
+```
+
+Execute com:
+```bash
+python testar_ollama.py
+```
+
+Se o Ollama não estiver a correr, verá um erro de ligação. Nesse caso, inicie-o primeiro:
+```bash
+ollama serve
+```
+
+---
+
+## Problemas comuns
+
+### ❌ `Connection refused` ao usar `ollama`
+
+O servidor Ollama não está a correr.
+
+**Solução**: Abra outro terminal e execute `ollama serve`. O servidor fica activo enquanto o terminal estiver aberto.
+
+### ❌ `model not found`
+
+O modelo ainda não foi descarregado.
+
+**Solução**: Execute `ollama pull qwen2.5:3b` antes de usar o modelo (ver Cap. 8 e 9).
+
+### ❌ `Python version not supported`
+
+Verifique que está a usar Python 3.11 ou superior:
+
+```bash
+python --version
+```
+
+---
+
+## Resumo
+
+Neste capítulo:
+- Criou o `requirements.txt` com os pacotes `ollama`, `langchain`, `langchain-ollama`, `langchain-community` e `requests`
+- Instalou todas as dependências com `pip install -r requirements.txt` (menos de 1 minuto)
+- Verificou que a instalação foi bem sucedida
+- Testou a ligação Python → Ollama
+
+No próximo capítulo, instalamos o Ollama — o servidor local de IA que o EmpresaIQ precisa.
+
+---
+
+*Capítulo seguinte: [8. Instalação do Ollama →](./instalacao-llamacpp)*
+
+---
+
+## O que são dependências?
+
+O Python por si só não sabe comunicar com modelos de IA, fazer pedidos web ou construir agentes. Para isso, precisamos de **pacotes** (também chamados bibliotecas ou dependências) — conjuntos de código escritos por outras pessoas que podemos reutilizar.
+
+O gestor de pacotes do Python chama-se **pip**. Com um simples comando, ele descarrega e instala tudo o que precisamos.
+
+```mermaid
+graph LR
+    A["📄 requirements.txt\nLista de pacotes"] -->|pip install -r| B["🔧 pip"]
     B --> C["🐍 llama-cpp-python\nMotor do modelo"]
     B --> D["🔗 LangChain\nFramework do agente"]
     B --> E["🌐 requests\nChamadas HTTP"]

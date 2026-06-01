@@ -100,7 +100,7 @@ async def chat(pedido: Pedido):
 
 @app.get("/saude")
 async def saude():
-    return {"estado": "operacional", "modelo": "Phi-3-mini Q4"}
+    return {"estado": "operacional", "modelo": "empresaiq"}
 
 # Iniciar: uvicorn api_empresaiq:app --host 127.0.0.1 --port 8000
 # Documentação automática: http://localhost:8000/docs
@@ -161,21 +161,26 @@ def transcrever_audio(caminho_audio: str) -> str:
 
 ## Melhoria 5 — Aceleração GPU (se tiver placa dedicada)
 
-Se o servidor evoluir para ter uma GPU NVIDIA, a velocidade pode aumentar 10x-50x:
+Se o servidor evoluir para ter uma GPU NVIDIA, a velocidade pode aumentar 10x-50x. O Ollama suporta CUDA nativamente — basta instalar o Ollama com suporte GPU:
 
 ```bash
-# Recompilar llama-cpp-python com suporte CUDA
-$env:CMAKE_ARGS = "-DLLAMA_CUDA=on"
-pip install llama-cpp-python --force-reinstall --no-cache-dir
+# Linux com NVIDIA GPU (CUDA instalado)
+# O Ollama detecta automaticamente a GPU ao iniciar
+ollama serve
+
+# Verificar se a GPU está a ser usada
+ollama ps  # Mostra o modelo activo e se usa GPU ou CPU
 ```
 
 ```python
-# Activar offloading de camadas para GPU
-llm = LlamaCpp(
-    model_path="./modelo.gguf",
-    n_gpu_layers=35,  # Quantas camadas delegar à GPU (teste vários valores)
-    n_threads=4,
-    ...
+# No código Python, não precisa de mudar nada
+# O Ollama gere automaticamente o offloading para GPU
+from langchain_ollama import OllamaLLM
+
+llm = OllamaLLM(
+    model="empresaiq",
+    base_url="http://localhost:11434",
+    # Com GPU, as respostas são muito mais rápidas automaticamente
 )
 ```
 

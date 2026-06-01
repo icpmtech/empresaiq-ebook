@@ -30,7 +30,7 @@ Um modelo de linguagem é essencialmente um conjunto gigantesco de números — 
 | Mixtral 8x7B | 56 mil milhões | 64 GB | Obrigatória |
 | DeepSeek V3 | 37 mil milhões | 32 GB+ | Obrigatória |
 | Llama 3 8B (formato completo) | 8 mil milhões | 16 GB | Recomendada |
-| **Phi-3-mini Q4 (EmpresaIQ)** | **3,8 mil milhões** | **2,2 GB** | **❌ Não precisa** |
+| **Qwen2.5-3B Q4 (EmpresaIQ)** | **3 mil milhões** | **2,0 GB** | **❌ Não precisa** |
 
 Estes modelos grandes estão completamente **fora de alcance** para um computador de escritório. Mas os modelos que usamos no EmpresaIQ cabem confortavelmente em 8 GB de RAM.
 
@@ -46,7 +46,7 @@ O EmpresaIQ resolve o problema do hardware com três decisões inteligentes, usa
 
 ### Pilar 1 — Modelos compactos e especializados
 
-Em vez de tentar correr modelos gigantes, escolhemos modelos entre **2B e 4B parâmetros** que foram especialmente optimizados para raciocínio e seguimento de instruções. O **Phi-3-mini** da Microsoft e o **Qwen2.5** da Alibaba são dois exemplos excelentes.
+Em vez de tentar correr modelos gigantes, escolhemos modelos entre **2B e 4B parâmetros** que foram especialmente optimizados para raciocínio e seguimento de instruções. O **Qwen2.5-3B** da Alibaba é a nossa escolha principal — excelente compreensão de português, eficiente em CPU, e a base do modelo empresaiq personalizado.
 
 Para as tarefas que o EmpresaIQ precisa de realizar, estes modelos são **mais do que suficientes**:
 
@@ -63,17 +63,20 @@ A quantização é uma técnica que comprime o modelo sem perder demasiada quali
 Na prática:
 
 ```
-Phi-3-mini formato completo (FP16):   ~7.2 GB  ❌ Não cabe em 8 GB RAM
-Phi-3-mini quantizado Q4_K_M:          ~2.2 GB  ✅ Cabe, sobra espaço
+Qwen2.5-3B formato completo (FP16):  ~6.0 GB  ❌ Não cabe facilmente em 8 GB RAM
+Qwen2.5-3B quantizado Q4 (Ollama):  ~2.0 GB  ✅ Cabe, sobra espaço
 ```
 
-O sufixo **Q4_K_M** indica o nível de quantização. Vamos aprender mais sobre isto no Capítulo 5. Por agora, o importante é saber que existe, funciona, e é o que o EmpresaIQ usa.
+O **Ollama** trata da quantização automaticamente ao descarregar o modelo — não precisa de gerir ficheiros GGUF manualmente. Vamos aprender mais sobre isto no Capítulo 5.
 
-### Pilar 3 — llama.cpp como motor de execução
+### Pilar 3 — Ollama como servidor local de IA
 
-O **llama.cpp** é uma ferramenta open source que serve de motor para correr modelos GGUF no CPU. Foi escrito em C++ e é extremamente eficiente — usa todos os núcleos disponíveis do processador e gere a memória de forma inteligente.
+O **Ollama** é uma ferramenta open source que serve de servidor para correr modelos de IA localmente. Foi desenhado para ser simples de usar, gere a quantização automaticamente, e expoem uma API REST que o Python usa para comunicar com o modelo.
 
-Sem o llama.cpp, correr um modelo GGUF no CPU seria lento ou impossível. Com ele, a velocidade é muito aceitável para uso profissional.
+Com o Ollama, correr o modelo empresaiq (Qwen2.5-3B) é tão simples quanto:
+```bash
+ollama run empresaiq
+```
 
 ---
 
@@ -87,7 +90,7 @@ graph TD
         direction LR
         OS["🖥️ Sistema Operativo\n~2 GB"]
         APP["📱 Aplicações abertas\n~1.5 GB"]
-        M["🧠 Modelo GGUF Q4\n~2.2 GB"]
+        M["🧠 Modelo Qwen2.5-3B Q4\n~2.0 GB"]
         PY["🐍 Python + LangChain\n~0.5 GB"]
         FREE["✅ RAM Livre\n~1.8 GB"]
     end
@@ -96,7 +99,7 @@ graph TD
     style PC fill:#FFFDF5,stroke:#1D2951,stroke-width:2px
 ```
 
-O EmpresaIQ usa cerca de 2.7 GB para o modelo e o Python — deixando RAM disponível para o sistema operativo e outras aplicações.
+O EmpresaIQ usa cerca de 2.5 GB para o modelo e o Python — deixando RAM disponível para o sistema operativo e outras aplicações.
 
 :::tip Maximizar a performance disponível
 Antes de correr o EmpresaIQ, feche o browser (especialmente se tiver muitos separadores abertos) e outras aplicações pesadas. Cada GB de RAM livre traduz-se em respostas mais rápidas.
@@ -112,8 +115,8 @@ Juntando os três pilares, fica assim:
 graph TD
     subgraph PC["🖥️ O Seu PC com 8 GB RAM"]
         direction TB
-        M["Phi-3-mini Q4_K_M\nModelo GGUF — 2.2 GB"]
-        LC["llama.cpp\nMotor CPU — 4+ threads"]
+        M["Qwen2.5-3B Q4\nModelo via Ollama — 2.0 GB"]
+        LC["Ollama\nServidor local de IA"]
         PY["Python + LangChain\nCérebro do Agente"]
         T["Ferramentas\nFicheiros · Web · BD"]
 
@@ -152,11 +155,11 @@ Mas para a maioria das tarefas empresariais, 8 GB RAM é perfeitamente suficient
 
 Conseguimos correr o EmpresaIQ num PC normal porque combinamos:
 
-1. **Modelos compactos** (Phi-3-mini, Qwen2.5) — capazes, mas eficientes
-2. **Quantização Q4** — reduz o tamanho do modelo de 7 GB para 2.2 GB
-3. **llama.cpp** — motor de inferência optimizado para CPU
+1. **Modelos compactos** (Qwen2.5-3B) — capazes, mas eficientes
+2. **Quantização Q4** — gerida automaticamente pelo Ollama
+3. **Ollama** — servidor de inferência local, simples e eficiente
 
-No próximo capítulo, vamos escolher exactamente qual o modelo certo para o EmpresaIQ — e perceber porque o Phi-3-mini é a nossa escolha de eleição.
+No próximo capítulo, vamos escolher exactamente qual o modelo certo para o EmpresaIQ.
 
 ---
 
