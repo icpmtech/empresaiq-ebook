@@ -1,10 +1,10 @@
 ---
 sidebar_position: 12
-title: "12. Optimizações para CPU"
-description: "Tirar o máximo do EmpresaIQ em qualquer PC — configurações práticas de desempenho"
+title: "12. Optimizações de Desempenho"
+description: "Tirar o máximo do EmpresaIQ em qualquer PC — configurações práticas de desempenho com Ollama"
 ---
 
-# Optimizações para CPU
+# Optimizações de Desempenho
 
 > *"O EmpresaIQ já funciona. Agora vamos fazê-lo funcionar melhor — sem gastar mais um cêntimo em hardware."*
 
@@ -12,11 +12,11 @@ description: "Tirar o máximo do EmpresaIQ em qualquer PC — configurações pr
 
 ## Porque é que a optimização importa?
 
-Num PC com 8 GB de RAM a correr um modelo em CPU, cada segundo conta. A diferença entre uma configuração optimizada e uma não optimizada pode ser de 2x a 4x na velocidade de resposta — sem mudar uma linha de código funcional, apenas ajustando parâmetros.
+Num PC com 8 GB de RAM a correr um modelo em CPU, cada segundo conta. A diferença entre uma configuração optimizada e uma não optimizada pode ser de 2x a 3x na velocidade de resposta — sem mudar uma linha de código funcional, apenas ajustando parâmetros do Ollama.
 
 ```mermaid
 graph LR
-    A["🐢 Configuração Padrão\n~60 seg/resposta"] -->|"Optimizações"| B["⚡ Configuração Optimizada\n~20 seg/resposta"]
+    A["🐢 Configuração Padrão\n~60 seg/resposta"] -->|"Optimizações Ollama"| B["⚡ Configuração Optimizada\n~25 seg/resposta"]
     B --> C["✅ EmpresaIQ produtivo"]
     style C fill:#2E7D32,color:#fff
     style A fill:#c62828,color:#fff
@@ -24,58 +24,60 @@ graph LR
 
 ---
 
-## Optimização 1 — Acertar o número de threads
+## Optimização 1 — Manter o modelo em memória (OLLAMA_KEEP_ALIVE)
 
-Esta é a configuração com **maior impacto** na velocidade. O `n_threads` define quantos núcleos do CPU o llama.cpp usa para gerar cada resposta.
+Por padrão, o Ollama descarrega o modelo da RAM após 5 minutos de inactividade. Quando o agente é chamado de novo, precisa de carregar o modelo outra vez — o que demora 10-30 segundos.
 
-```python title="agente_local.py (ajuste este valor)"
-llm = LlamaCpp(
-    model_path="./Phi-3-mini-4k-instruct-Q4_K_M.gguf",
-    n_threads=4,   # ← AJUSTE AQUI
-    ...
-)
-```
-
-### Como saber quantos núcleos tem o seu CPU:
+Para respostas imediatas em produção, aumente o tempo de retenção:
 
 ```bash
-# Windows (PowerShell)
-(Get-WmiObject Win32_Processor).NumberOfLogicalProcessors
-# Resultado: 8 = 8 núcleos lógicos (use n_threads = 4 a 6)
+# Windows (PowerShell) — definir antes de iniciar o Ollama
+$env:OLLAMA_KEEP_ALIVE = "30m"   # Manter 30 minutos em memória
+ollama serve
 
-# Linux
-nproc
-
-# macOS
-sysctl -n hw.logicalcpu
+# Linux / macOS
+OLLAMA_KEEP_ALIVE=30m ollama serve
 ```
 
-| CPU (exemplos) | Núcleos Lógicos | n_threads recomendado |
-|---|---|---|
-| Intel Core i3 (2 cores) | 4 | 2 |
-| Intel Core i5 (4 cores) | 8 | 4 |
-| Intel Core i7 (6 cores) | 12 | 6 |
-| AMD Ryzen 5 (6 cores) | 12 | 6 |
-| AMD Ryzen 7 (8 cores) | 16 | 6-8 |
+Ou defina permanentemente no sistema:
 
-:::tip Regra prática
-Use os **núcleos físicos** (metade dos lógicos em CPUs com Hyper-Threading), ou núcleos lógicos - 2. Deixe sempre 1-2 núcleos livres para o sistema operativo.
-:::
+```bash
+# Linux — adicionar ao /etc/environment ou ~/.profile
+export OLLAMA_KEEP_ALIVE=30m
+
+# Windows — nas Definições do Sistema > Variáveis de Ambiente
+OLLAMA_KEEP_ALIVE = 30m
+```
+
+| Valor | Quando usar |
+|---|---|
+| `5m` (padrão) | PC pessoal com pouca RAM |
+| `30m` | Uso empresarial durante o dia |
+| `60m` | Servidor sempre ligado |
+| `-1` | Nunca descarregar (sempre em RAM) |
 
 ---
 
-## Optimização 2 — Ajustar o contexto ao mínimo necessário
+## Optimização 2 — Ajustar o contexto no Modelfile
 
-O `n_ctx` (tamanho do contexto) afecta directamente a RAM usada e a velocidade. Quanto maior o contexto, mais lento e mais RAM consome.
+O `num_ctx` (tamanho do contexto) define quantos tokens o modelo "lembra" de uma vez. Quanto maior, mais RAM consome. No Modelfile do EmpresaIQ (Cap. 9), configure conforme o hardware:
 
-```python
-n_ctx=1024   # ⚡⚡ Máxima velocidade — para perguntas curtas e directas
-n_ctx=2048   # ✅ Recomendado — equilíbrio ideal
-n_ctx=4096   # ⚠️ Mais lento — apenas para documentos longos
-n_ctx=8192   # 🐢 Muito lento — evitar em 8 GB RAM
+```dockerfile title="Modelfile"
+# Para 8 GB RAM — equilíbrio ideal
+PARAMETER num_ctx 4096
+
+# Para 4-6 GB RAM — mais rápido
+PARAMETER num_ctx 2048
+
+# Para 16 GB RAM — análise de documentos longos
+PARAMETER num_ctx 8192
 ```
 
-Para o EmpresaIQ em uso normal, `n_ctx=2048` cobre a maioria das tarefas empresariais.
+Após alterar o Modelfile, recrie o modelo:
+
+```bash
+ollama create empresaiq -f Modelfile
+```
 
 ---
 
@@ -83,11 +85,11 @@ Para o EmpresaIQ em uso normal, `n_ctx=2048` cobre a maioria das tarefas empresa
 
 A `temperature` controla a "criatividade" do modelo. Para um agente empresarial que precisa de responder com precisão:
 
-```python
-temperature=0.05  # Máxima precisão — ideal para dados e números
-temperature=0.1   # ✅ Recomendado — preciso mas natural
-temperature=0.3   # Ligeiramente mais criativo — para texto narrativo
-temperature=0.7   # Alta criatividade — para brainstorming
+```dockerfile title="Modelfile"
+PARAMETER temperature 0.05  # Máxima precisão — ideal para dados e números
+PARAMETER temperature 0.1   # ✅ Recomendado — preciso mas natural
+PARAMETER temperature 0.3   # Ligeiramente mais criativo — para texto narrativo
+PARAMETER temperature 0.7   # Alta criatividade — para brainstorming
 ```
 
 Com `temperature` baixa, o agente:
@@ -127,72 +129,79 @@ ps aux --sort=-%mem | head -10
 
 ---
 
-## Optimização 5 — Recompilar com AVX2 (30-50% mais rápido)
+## Optimização 5 — Paralelismo para múltiplos utilizadores
 
-Se ainda não fez isto no Capítulo 8, aqui está o impacto e como fazer:
-
-**Verificar suporte AVX2:**
+Se o EmpresaIQ servir múltiplos utilizadores simultaneamente (ex: via API web), configure o Ollama para processar pedidos em paralelo:
 
 ```bash
-# Linux
-grep -m1 avx2 /proc/cpuinfo && echo "AVX2 suportado!" || echo "AVX2 não disponível"
+# Permitir 2 pedidos simultâneos
+$env:OLLAMA_NUM_PARALLEL = "2"
 
-# Windows — a maioria dos Core i3/i5/i7/i9 e Ryzen suportam
+# Manter 2 modelos carregados em RAM (útil para múltiplos modelos)
+$env:OLLAMA_MAX_LOADED_MODELS = "2"
 ```
 
-**Recompilar:**
-
-```bash
-# Windows
-$env:CMAKE_ARGS = "-DLLAMA_AVX2=on -DLLAMA_AVX=on"
-pip install llama-cpp-python==0.2.76 --force-reinstall --no-cache-dir
-
-# Linux / macOS
-CMAKE_ARGS="-DLLAMA_AVX2=on -DLLAMA_AVX=on" \
-pip install llama-cpp-python==0.2.76 --force-reinstall --no-cache-dir
-```
+:::caution Para uso individual
+Para uso de uma única pessoa, mantenha `OLLAMA_NUM_PARALLEL=1`. O paralelismo divide os recursos de CPU entre pedidos e pode tornar cada resposta individual mais lenta.
+:::
 
 ---
 
 ## Configuração final recomendada
 
-Juntando todas as optimizações, o `agente_local.py` optimizado fica assim:
+Para um PC de escritório com 8 GB RAM usado por uma pessoa:
 
-```python title="agente_local.py (configuração optimizada)"
-llm = LlamaCpp(
-    model_path="./Phi-3-mini-4k-instruct-Q4_K_M.gguf",
-    n_ctx=2048,          # Contexto suficiente para tarefas empresariais
-    n_threads=4,         # Substitua pelo número de núcleos físicos do seu CPU
-    n_batch=512,         # Processa 512 tokens de cada vez (melhora throughput)
-    temperature=0.1,     # Precisão máxima para uso empresarial
-    repeat_penalty=1.1,  # Reduz repetições nas respostas
-    verbose=False
-)
+```bash title="iniciar_empresaiq.ps1 (Windows)"
+# Script de arranque optimizado
+$env:OLLAMA_KEEP_ALIVE = "30m"
+$env:OLLAMA_NUM_PARALLEL = "1"
+Start-Process ollama -ArgumentList "serve" -WindowStyle Hidden
+Write-Host "✅ Ollama iniciado — EmpresaIQ pronto!"
+```
+
+```bash title="iniciar_empresaiq.sh (Linux/macOS)"
+#!/bin/bash
+export OLLAMA_KEEP_ALIVE=30m
+export OLLAMA_NUM_PARALLEL=1
+ollama serve &
+echo "✅ Ollama iniciado — EmpresaIQ pronto!"
+```
+
+E o Modelfile optimizado:
+
+```dockerfile title="Modelfile (configuração optimizada)"
+FROM qwen2.5:3b
+
+SYSTEM """
+És o EmpresaIQ...
+"""
+
+PARAMETER temperature 0.1
+PARAMETER top_p 0.9
+PARAMETER num_ctx 4096        # Ajuste conforme RAM disponível
+PARAMETER repeat_penalty 1.1
 ```
 
 ---
 
 ## Medir a velocidade do EmpresaIQ
 
-Se quiser medir a melhoria antes e depois das optimizações:
+Se quiser medir a velocidade de resposta antes e depois das optimizações:
 
 ```python title="benchmark_simples.py"
 import time
-from llama_cpp import Llama
-
-llm = Llama(
-    model_path="./Phi-3-mini-4k-instruct-Q4_K_M.gguf",
-    n_ctx=512,
-    n_threads=4,
-    verbose=False
-)
+import ollama
 
 start = time.time()
-resposta = llm("Responde apenas: olá", max_tokens=10)
+resposta = ollama.chat(
+    model='empresaiq',
+    messages=[{'role': 'user', 'content': 'Responde apenas: olá'}]
+)
 elapsed = time.time() - start
 
+tokens = len(resposta['message']['content'].split())
 print(f"Tempo de resposta: {elapsed:.1f} segundos")
-print(f"Velocidade: ~{10/elapsed:.0f} tokens/segundo")
+print(f"Velocidade: ~{tokens/elapsed:.0f} palavras/segundo")
 ```
 
 ---

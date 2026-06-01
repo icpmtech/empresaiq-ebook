@@ -1,12 +1,12 @@
 ---
 sidebar_position: 17
-title: "17. Qwen2.5 no Agente EmpresaIQ"
-description: "Substituir o Phi-3-mini pelo Qwen2.5 — mais qualidade na segurança de instruções e ferramenta-uso"
+title: "17. Modelos Alternativos via Ollama"
+description: "Usar modelos diferentes no EmpresaIQ — mudar de modelo é uma única linha de código"
 ---
 
-# Qwen2.5 no Agente EmpresaIQ
+# Modelos Alternativos via Ollama
 
-> *"Modelos diferentes têm personalidades diferentes. O Phi-3-mini é rápido e eficiente. O Qwen2.5 é mais rigoroso com instruções estruturadas. Para um agente empresarial com ferramentas, esta diferença é significativa."*
+> *"Modelos diferentes têm personalidades diferentes. Com o Ollama, mudar de modelo é tão simples como mudar uma linha no Modelfile — todo o resto permanece igual."*
 
 ---
 
@@ -14,76 +14,87 @@ description: "Substituir o Phi-3-mini pelo Qwen2.5 — mais qualidade na seguran
 
 O Qwen2.5 é uma família de modelos Open Source desenvolvida pela Alibaba Cloud. Nos benchmarks de seguimento de instruções e uso de ferramentas (tool calling), o Qwen2.5 destaca-se como uma das melhores opções para hardware limitado.
 
-Para o EmpresaIQ, a mudança de modelo é simples: apenas uma linha de código muda. Todo o resto — ferramentas, agente ReAct, interface — fica exactamente igual.
+O EmpresaIQ usa o Qwen2.5-3B como base por defeito (Cap. 9). Mas o Ollama tem um catálogo completo de modelos — pode experimentar qualquer um com um único comando.
 
 ```mermaid
 flowchart TD
     A["❓ Que modelo usar?"] --> B{"RAM disponível"}
-    B -->|"4 GB"| C["⚡ Qwen2.5-1.5B Q4\n~1.2 GB RAM"]
-    B -->|"8 GB"| D["✅ Qwen2.5-3B Q4\n~2.5 GB RAM"]
-    B -->|"16 GB"| E["💪 Qwen2.5-7B Q4\n~4.5 GB RAM"]
+    B -->|"4 GB"| C["⚡ qwen2.5:1.5b\n~1.2 GB RAM"]
+    B -->|"8 GB"| D["✅ empresaiq\n(qwen2.5:3b)\n~2.5 GB RAM"]
+    B -->|"16 GB"| E["💪 qwen2.5:7b\n~4.7 GB RAM"]
     style D fill:#E8720C,color:#fff
 ```
 
 ---
 
-## Vantagens do Qwen2.5 para o EmpresaIQ
+## Modelos disponíveis no Ollama
 
-| Característica | Phi-3-mini | Qwen2.5-3B |
-|---|---|---|
-| Velocidade CPU | ⚡⚡⚡⚡ Rápido | ⚡⚡⚡ Bom |
-| Seguimento de instruções | ★★★★ | ★★★★★ |
-| Uso de ferramentas (ReAct) | ★★★ | ★★★★★ |
-| Multilíngue (PT/EN/ES) | ★★★★ | ★★★★★ |
-| Taxa de alucinação | Baixa | Muito baixa |
-| Licença | MIT | Apache 2.0 |
-
-Para o agente EmpresaIQ especificamente, o Qwen2.5 é mais consistente a escolher a ferramenta certa e a formatar as respostas no padrão ReAct.
+| Modelo | Comando pull | RAM usada | Pontos fortes |
+|---|---|---|---|
+| **empresaiq** (padrão) | *(criado no Cap. 9)* | ~2.5 GB | Personalizado para PT empresarial |
+| `qwen2.5:1.5b` | `ollama pull qwen2.5:1.5b` | ~1.2 GB | Ultra-rápido, 4 GB RAM |
+| `qwen2.5:3b` | `ollama pull qwen2.5:3b` | ~2.5 GB | ✅ Base do EmpresaIQ |
+| `qwen2.5:7b` | `ollama pull qwen2.5:7b` | ~4.7 GB | Mais capaz, 16 GB RAM |
+| `phi4-mini` | `ollama pull phi4-mini` | ~2.5 GB | Alternativa Microsoft |
+| `llama3.2:3b` | `ollama pull llama3.2:3b` | ~2.0 GB | Meta, rápido |
+| `mistral:7b` | `ollama pull mistral:7b` | ~4.1 GB | Europeu, forte em PT |
 
 ---
 
-## Passo 1 — Descarregar o modelo
+## Usar o Qwen2.5-7B para mais qualidade
 
-O modelo recomendado para 8 GB RAM é o **Qwen2.5-3B-Instruct Q4_K_M**:
+Se tiver 16 GB de RAM e quiser respostas de maior qualidade:
 
 ```bash
-# Via Hugging Face Hub (método recomendado)
-pip install huggingface-hub
-
-python -c "
-from huggingface_hub import hf_hub_download
-hf_hub_download(
-    repo_id='Qwen/Qwen2.5-3B-Instruct-GGUF',
-    filename='qwen2.5-3b-instruct-q4_k_m.gguf',
-    local_dir='.'
-)
-print('Download concluído!')
-"
+# Descarregar o modelo maior
+ollama pull qwen2.5:7b
 ```
 
-Tamanho: ~2.0 GB. Demora 5-15 minutos conforme a ligação.
+### Criar um Modelfile para a versão 7B
+
+```dockerfile title="Modelfile-7b"
+FROM qwen2.5:7b
+
+SYSTEM """
+És o EmpresaIQ Pro — um assistente de inteligência artificial empresarial
+especializado para empresas portuguesas.
+
+Respondes sempre em português de Portugal, com alta precisão e detalhe.
+...
+"""
+
+PARAMETER temperature 0.1
+PARAMETER top_p 0.9
+PARAMETER num_ctx 8192
+PARAMETER repeat_penalty 1.1
+```
+
+Criar o modelo:
+
+```bash
+ollama create empresaiq-pro -f Modelfile-7b
+ollama run empresaiq-pro
+```
 
 ---
 
-## Passo 2 — Substituir o modelo no agente
+## Mudar o modelo no agente Python
 
-A mudança no `agente_local.py` é minimal:
+A mudança no `agente_local.py` é uma única linha:
 
 ```python title="agente_local.py (apenas esta linha muda)"
-# ANTES (Phi-3-mini)
-llm = LlamaCpp(
-    model_path="./Phi-3-mini-4k-instruct-Q4_K_M.gguf",
-    n_ctx=2048, n_threads=4, temperature=0.1, verbose=False
+# ANTES — modelo base EmpresaIQ (Qwen2.5-3B)
+llm = OllamaLLM(
+    model="empresaiq",
+    base_url="http://localhost:11434",
+    temperature=0.1,
 )
 
-# DEPOIS (Qwen2.5-3B)
-llm = LlamaCpp(
-    model_path="./qwen2.5-3b-instruct-q4_k_m.gguf",
-    n_ctx=4096,    # Qwen suporta contexto maior
-    n_threads=4,
-    n_batch=256,
-    temperature=0.2,   # Ligeiramente mais alto para respostas mais naturais
-    verbose=False
+# DEPOIS — modelo Pro (Qwen2.5-7B)
+llm = OllamaLLM(
+    model="empresaiq-pro",       # ← só esta linha muda
+    base_url="http://localhost:11434",
+    temperature=0.1,
 )
 ```
 
@@ -91,226 +102,76 @@ Todo o resto do código — ferramentas, prompt, executor — não muda.
 
 ---
 
-## Passo 3 — Ajustar o prompt para Qwen
+## Comparar modelos para o contexto empresarial PT
 
-O Qwen responde melhor a prompts directos e estruturados. Aqui fica um template optimizado:
+| Característica | qwen2.5:3b | qwen2.5:7b | phi4-mini |
+|---|---|---|---|
+| Velocidade CPU | ⚡⚡⚡ Bom | ⚡⚡ Moderado | ⚡⚡⚡ Bom |
+| Seguimento de instruções | ★★★★★ | ★★★★★ | ★★★★ |
+| Uso de ferramentas (ReAct) | ★★★★★ | ★★★★★ | ★★★★ |
+| Multilíngue (PT/EN/ES) | ★★★★★ | ★★★★★ | ★★★★ |
+| Taxa de alucinação | Baixa | Muito baixa | Baixa |
+| RAM necessária | ~2.5 GB | ~4.7 GB | ~2.5 GB |
+| Licença | Apache 2.0 | Apache 2.0 | MIT |
 
-```python title="agente_local.py (template optimizado para Qwen)"
-template = """
-Sés o Agente EmpresaIQ — assistente empresarial profissional.
-Respondes sempre em português de Portugal.
-Se precisares de usar ferramentas, segue exactamente este formato:
+Para a maioria dos casos de uso empresarial, o `qwen2.5:3b` (base do EmpresaIQ) é mais do que suficiente. O `qwen2.5:7b` justifica-se quando a precisão é crítica e tem RAM disponível.
 
-Thought: [raciocínio sobre o que fazer]
-Action: [nome_da_ferramenta]
-Action Input: [argumento para a ferramenta]
-Observation: [resultado da ferramenta]
+---
 
-... (repete Thought/Action/Observation se necessário)
+## Experimento: testar rapidamente um novo modelo
 
-Final Answer: [resposta final ao utilizador]
+Para testar um modelo sem criar um Modelfile completo:
 
-Ferramentas disponíveis:
-{tools}
-
-Nomes das ferramentas: {tool_names}
-
-Pergunta: {input}
-
-Thought: {agent_scratchpad}
-"""
+```bash
+# Testar directamente via Ollama
+ollama run phi4-mini
+>>> Olá! Responde em português. Qual a diferença entre IVA e IRC?
 ```
 
-:::tip Prompt estruturado = Qwen mais preciso
-O Qwen2.5 é treinado para seguir formato estruturado. Quanto mais explícito o formato no prompt, mais consistente será o comportamento do agente.
-:::
+Ou via Python:
+
+```python
+import ollama
+
+# Testar modelo alternativo rapidamente
+resposta = ollama.chat(
+    model='phi4-mini',
+    messages=[{
+        'role': 'user',
+        'content': 'Que tipo de tarefas empresariais podes ajudar?'
+    }]
+)
+print(resposta['message']['content'])
+```
 
 ---
 
-## Configuração por quantidade de RAM
+## Gerir o espaço em disco
 
-| Modelo | Ficheiro GGUF | RAM usada | Recomendado para |
-|---|---|---|---|
-| Qwen2.5-1.5B Q4 | `...1.5b...q4_k_m.gguf` | ~1.2 GB | PCs com 4-6 GB RAM |
-| **Qwen2.5-3B Q4** | `...3b...q4_k_m.gguf` | ~2.5 GB | **PCs com 8 GB RAM** |
-| Qwen2.5-7B Q4 | `...7b...q4_k_m.gguf` | ~4.5 GB | PCs com 12-16 GB RAM |
+Os modelos ocupam espaço em disco. Para gerir:
 
----
+```bash
+# Ver todos os modelos e tamanhos
+ollama list
 
-## Impacto prático no EmpresaIQ
-
-Com Qwen2.5, o agente EmpresaIQ:
-
-- Usa as ferramentas de forma mais consistente (menos erros de formato)
-- Produz respostas mais precisas em português
-- Tem menor taxa de "alucinação" (inventar factos)
-- Segue melhor instruções complexas no prompt
+# Remover um modelo que não usa
+ollama rm qwen2.5:7b
+```
 
 ---
 
 ## Resumo
 
 Neste capítulo:
-- Percebemos as diferenças entre Phi-3-mini e Qwen2.5
-- Descarregámos o modelo Qwen2.5-3B-Instruct Q4_K_M
-- Fizemos a substituição com uma única linha de código
-- Ajustámos o prompt para aproveitar os pontos fortes do Qwen
+- Explorámos o catálogo de modelos disponíveis no Ollama
+- Criámos um Modelfile para o Qwen2.5-7B (versão Pro)
+- Vimos que mudar de modelo é apenas uma linha de código
+- Comparámos modelos para o contexto empresarial português
+
+Com o Ollama, experimentar novos modelos é simples e reversível. O modelo base do EmpresaIQ (`qwen2.5:3b`) continua a ser a escolha certa para a maioria dos casos de uso.
 
 No próximo capítulo, adicionamos memória conversacional ao EmpresaIQ — para o agente se lembrar do contexto entre perguntas.
 
 ---
 
 *Capítulo seguinte: [18. Memória Conversacional →](./memoria-conversacional)*
-## 17.1 Introdução ao Qwen
-
-O Qwen2.5 é uma família de modelos de linguagem Open Source desenvolvida para desempenho elevado em tarefas de raciocínio, seguimento de instruções e utilização de ferramentas (tool use).
-
-Em cenários de hardware limitado, como máquinas com 8 GB de RAM e execução apenas em CPU, o Qwen destaca-se como uma das melhores alternativas disponíveis atualmente.
-
-Este modelo foi desenhado para ser eficiente, consistente e especialmente forte em tarefas estruturadas — tornando-o ideal para agentes inteligentes empresariais como o EmpresaIQ.
-
----
-
-## 17.2 Vantagens do Qwen para Agentes Locais
-
-Ao contrário de modelos mais antigos ou menos otimizados, o Qwen2.5 apresenta várias vantagens críticas:
-
-- Excelente compreensão de instruções complexas
-- Elevada estabilidade em fluxos ReAct (Reason + Act)
-- Melhor consistência em respostas estruturadas (JSON e tool calling)
-- Forte desempenho multilingue (Português, Inglês e Espanhol)
-- Menor taxa de alucinação em tarefas com ferramentas externas
-
-Estas características tornam-no particularmente adequado para sistemas de automação empresarial e agentes de decisão.
-
----
-
-## 17.3 Versão Recomendada para 8 GB RAM
-
-Para sistemas com recursos limitados, a versão ideal é:
-
-**Qwen2.5-3B-Instruct (GGUF Q4\_K\_M)**
-
-### Consumo estimado
-
-| Recurso | Valor |
-|---|---|
-| RAM utilizada | ~2.5 GB a 3.5 GB |
-| CPU | Moderado |
-| Performance | Fluida em tempo real (dependendo do processador) |
-
-### Alternativas
-
-| Modelo | Velocidade | Inteligência | Indicado para |
-|---|---|---|---|
-| Qwen2.5-1.5B | ⚡ Muito rápido | ⭐⭐ | Hardware muito limitado |
-| Qwen2.5-3B Q4\_K\_M | ⚡ Rápido | ⭐⭐⭐ | **Recomendado** |
-| Qwen2.5-7B Q4 | 🐢 Moderado | ⭐⭐⭐⭐ | Próximo do limite de RAM |
-
----
-
-## 17.4 Integração com Llama.cpp
-
-O Qwen pode ser facilmente executado através da biblioteca `llama-cpp-python`, mantendo compatibilidade total com arquiteturas de agentes baseadas em LangChain.
-
-A substituição do modelo é direta:
-
-```python
-model_path = "./qwen2.5-3b-instruct-q4_k_m.gguf"
-```
-
-O restante pipeline permanece inalterado, incluindo ferramentas e agente ReAct.
-
-### Exemplo completo de carregamento
-
-```python
-from llama_cpp import Llama
-
-llm = Llama(
-    model_path="./qwen2.5-3b-instruct-q4_k_m.gguf",
-    n_ctx=4096,
-    n_threads=4,
-    n_batch=256,
-    verbose=False,
-)
-```
-
----
-
-## 17.5 Ajustes Recomendados para Melhor Performance
-
-Para garantir estabilidade e rapidez no CPU, recomenda-se:
-
-- Definir contexto (`n_ctx`) entre 2048 e 4096
-- Ajustar threads ao número de núcleos físicos do CPU
-- Utilizar `temperature` entre 0.1 e 0.3
-- Limitar iterações do agente (max 3 a 4 loops)
-- Reduzir o tamanho das respostas das ferramentas
-
-### Configuração otimizada recomendada
-
-```python
-llm = Llama(
-    model_path="./qwen2.5-3b-instruct-q4_k_m.gguf",
-    n_ctx=4096,
-    n_threads=4,      # Ajustar ao número de núcleos físicos
-    n_batch=256,
-    temperature=0.2,
-    verbose=False,
-)
-```
-
----
-
-## 17.6 Melhorias no Prompt para Qwen
-
-O Qwen responde melhor a prompts diretos e estruturados.
-
-Ao contrário de outros modelos, não necessita de prompts excessivamente longos.
-
-### Boas práticas
-
-- Linguagem simples e directa
-- Estrutura clara de Thought / Action / Observation
-- Indicação explícita de resposta final em português
-
-### Exemplo de prompt eficaz
-
-```
-Você é um assistente empresarial. Responda sempre em português de Portugal.
-Quando usar ferramentas, siga exactamente o formato:
-Thought: [raciocínio]
-Action: [nome_ferramenta]
-Action Input: [parâmetro]
-Observation: [resultado]
-Final Answer: [resposta ao utilizador]
-```
-
----
-
-## 17.7 Impacto no Agente EmpresaIQ
-
-A adoção do Qwen2.5 no agente EmpresaIQ resulta em:
-
-- Maior precisão em decisões automatizadas
-- Melhor integração com ferramentas externas (APIs e bases de dados)
-- Redução de erros de interpretação
-- Melhor experiência conversacional
-- Maior robustez em ambientes de produção locais
-
----
-
-## 17.8 Conclusão
-
-O Qwen2.5 representa um salto significativo na construção de agentes inteligentes leves.
-
-Quando combinado com Llama.cpp e uma arquitetura de ferramentas bem definida, permite criar sistemas de IA locais altamente eficientes mesmo em hardware modesto.
-
-Para o EmpresaIQ, isto significa:
-
-- Independência total de cloud
-- Custos reduzidos
-- Controlo total dos dados
-- Capacidade de escalar automação empresarial localmente
-
-Este modelo torna possível aproximar agentes inteligentes de nível empresarial a qualquer computador pessoal moderno.

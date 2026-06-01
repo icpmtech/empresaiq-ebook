@@ -1,133 +1,172 @@
 ---
 sidebar_position: 9
-title: "9. Download do Modelo Phi-3-mini"
-description: "Descarregar o modelo GGUF do Hugging Face — o cérebro do EmpresaIQ"
+title: "9. Criação do Modelo EmpresaIQ"
+description: "Criar o modelo personalizado EmpresaIQ com Ollama Modelfile — identidade e configuração para uso empresarial"
 ---
 
-# Download do Modelo Phi-3-mini
+# Criação do Modelo EmpresaIQ
 
-> *"Chegou o momento mais concreto até agora: descarregar o cérebro do EmpresaIQ. Um ficheiro de 2.2 GB que contém tudo o que o modelo aprendeu."*
+> *"Um modelo genérico responde a qualquer coisa. Um modelo personalizado conhece o seu contexto, fala a sua língua e trabalha como um colaborador da sua empresa."*
 
 ---
 
-## O que vamos descarregar
+## O que é o modelo EmpresaIQ?
 
-```
-Ficheiro : Phi-3-mini-4k-instruct-Q4_K_M.gguf
-Tamanho  : ~2.2 GB
-Fonte    : Hugging Face (huggingface.co)
-Licença  : MIT (uso comercial permitido)
-```
+O **modelo EmpresaIQ** não é um modelo treinado do zero — é um modelo base (Qwen2.5-3B) **personalizado via Ollama Modelfile**. Um Modelfile define:
 
-Este único ficheiro contém todo o conhecimento do modelo, pronto a ser usado pelo llama.cpp.
+- A **identidade** do assistente (quem é, como se chama, qual o seu propósito)
+- O **comportamento** esperado (resposta em português, foco empresarial, honestidade)
+- Os **parâmetros** de geração (temperature, contexto, tokens de paragem)
+
+O resultado é um modelo chamado `empresaiq` que o Ollama gere como se fosse um modelo independente.
 
 ```mermaid
-sequenceDiagram
-    participant V as 👤 Você
-    participant HF as 🤗 Hugging Face
-    participant D as 💾 Disco Local
-    participant E as 🏢 EmpresaIQ
-    V->>HF: Pedir ficheiro GGUF
-    HF-->>D: Transferir ~2.2 GB
-    D-->>E: Modelo disponível
-    E-->>V: ✅ Pronto para usar!
+flowchart TD
+    A["📄 Modelfile\n(texto de configuração)"] --> B["🔧 ollama create\nempreSaIQ -f Modelfile"]
+    C["🤖 qwen2.5:3b\n(modelo base)"] --> B
+    B --> D["✅ Modelo empresaiq\nregistado no Ollama"]
+    D --> E["🚀 ollama run empresaiq"]
+    style D fill:#E8720C,color:#fff
+    style C fill:#1D2951,color:#fff
 ```
 
 ---
 
-## O que é o Hugging Face?
+## Passo 1 — Garantir que o modelo base está instalado
 
-O **Hugging Face** (huggingface.co) é a maior plataforma do mundo para partilha de modelos de IA open source. Funciona como um "GitHub para modelos de IA" — qualquer pessoa pode publicar e descarregar modelos gratuitamente.
-
-Não precisa de criar conta para descarregar modelos públicos como o Phi-3-mini.
-
----
-
-## Método 1 — Download pelo browser (mais simples)
-
-1. Abra o browser e vá a: `huggingface.co/bartowski/Phi-3-mini-4k-instruct-GGUF`
-2. Clique em **"Files and versions"** (separador no centro da página)
-3. Procure o ficheiro `Phi-3-mini-4k-instruct-Q4_K_M.gguf` (o ficheiro com ~2.2 GB)
-4. Clique no ícone de download ⬇️ à direita do nome do ficheiro
-5. Aguarde o download completar
-6. Mova o ficheiro descarregado para a pasta `empresaiq-agent/`
-
-:::tip Onde guardar o ficheiro
-O ficheiro `.gguf` deve ficar directamente dentro da pasta `empresaiq-agent/`, na mesma localização que os ficheiros Python que vamos criar.
-:::
-
----
-
-## Método 2 — Download por linha de comandos (mais rápido)
-
-Se preferir usar o terminal:
+O modelo EmpresaIQ é construído sobre o `qwen2.5:3b`. Se ainda não o descarregou no Capítulo 8:
 
 ```bash
-# Instalar o cliente Hugging Face (uma vez apenas)
-pip install huggingface-hub
-
-# Descarregar o modelo directamente para a pasta do projecto
-python -c "
-from huggingface_hub import hf_hub_download
-hf_hub_download(
-    repo_id='bartowski/Phi-3-mini-4k-instruct-GGUF',
-    filename='Phi-3-mini-4k-instruct-Q4_K_M.gguf',
-    local_dir='.'
-)
-print('Download concluído!')
-"
+ollama pull qwen2.5:3b
 ```
 
----
-
-## Método 3 — wget / PowerShell
+Verifique que está instalado:
 
 ```bash
-# Linux / macOS
-wget -O Phi-3-mini-4k-instruct-Q4_K_M.gguf \
-  https://huggingface.co/bartowski/Phi-3-mini-4k-instruct-GGUF/resolve/main/Phi-3-mini-4k-instruct-Q4_K_M.gguf
-
-# Windows (PowerShell)
-Invoke-WebRequest `
-  -Uri "https://huggingface.co/bartowski/Phi-3-mini-4k-instruct-GGUF/resolve/main/Phi-3-mini-4k-instruct-Q4_K_M.gguf" `
-  -OutFile "Phi-3-mini-4k-instruct-Q4_K_M.gguf"
+ollama list
+# NAME            ID              SIZE    MODIFIED
+# qwen2.5:3b      ...             2.0 GB  ...
 ```
 
 ---
 
-## Verificar o download
+## Passo 2 — Criar o Modelfile
 
-Após o download, confirme que o ficheiro tem o tamanho correcto (~2.2 GB):
+Dentro da pasta `empresaiq-agent/`, crie um ficheiro chamado `Modelfile` com o seguinte conteúdo:
+
+```dockerfile title="Modelfile"
+# Modelo base — Qwen2.5-3B é excelente para português e uso de ferramentas
+FROM qwen2.5:3b
+
+# Identidade e comportamento do EmpresaIQ
+SYSTEM """
+És o EmpresaIQ — um assistente de inteligência artificial empresarial
+especializado para empresas portuguesas.
+
+Respondes sempre em português de Portugal, de forma clara, profissional
+e objectiva. Usas terminologia empresarial portuguesa correcta.
+
+Princípios que segues:
+- Quando usas ferramentas para obter informação, indicas sempre a fonte.
+- Quando não tens certeza, dizes que não sabes em vez de inventar factos.
+- Respondes de forma concisa — sem rodeios desnecessários.
+- Para tarefas numéricas ou factuais, apresentas os resultados com precisão.
+
+Especializas-te em: análise de documentos, contratos e propostas comerciais,
+cálculos financeiros, pesquisa de empresas portuguesas, automatização de
+tarefas administrativas e resposta a questões de gestão empresarial.
+"""
+
+# Parâmetros de geração
+PARAMETER temperature 0.1
+PARAMETER top_p 0.9
+PARAMETER num_ctx 4096
+PARAMETER repeat_penalty 1.1
+```
+
+### O que cada instrução faz
+
+| Instrução | Explicação |
+|---|---|
+| `FROM qwen2.5:3b` | Define o modelo base |
+| `SYSTEM "..."` | Prompt de sistema permanente — define a identidade |
+| `temperature 0.1` | Baixa criatividade = alta precisão para uso empresarial |
+| `top_p 0.9` | Equilíbrio entre diversidade e qualidade das respostas |
+| `num_ctx 4096` | Janela de contexto — quanto o modelo "lembra" da conversa |
+| `repeat_penalty 1.1` | Reduz repetições nas respostas |
+
+---
+
+## Passo 3 — Criar o modelo no Ollama
+
+Com o Modelfile criado, construa o modelo personalizado:
 
 ```bash
-# Windows (PowerShell)
-Get-Item "Phi-3-mini-4k-instruct-Q4_K_M.gguf" | Select-Object Name, @{N='Tamanho';E={'{0:N2} GB' -f ($_.Length/1GB)}}
-
-# Linux / macOS
-ls -lh Phi-3-mini-4k-instruct-Q4_K_M.gguf
+ollama create empresaiq -f Modelfile
 ```
 
-Deve mostrar aproximadamente **2.2 GB** (2,200,000,000 bytes).
+Verá um output semelhante a:
+
+```
+transferring model data
+using existing layer sha256:66a7...
+creating new layer sha256:8c3d...  ← sistema de prompts
+writing manifest
+success
+```
+
+O modelo `empresaiq` está agora registado no Ollama.
 
 ---
 
-## Teste rápido do modelo
+## Passo 4 — Testar o modelo EmpresaIQ
 
-Se quiser confirmar que o modelo funciona antes de avançar, faça um teste rápido:
+Teste interactivamente:
+
+```bash
+ollama run empresaiq
+>>> Apresenta-te brevemente.
+```
+
+Deverá responder algo como:
+
+```
+Sou o EmpresaIQ, o seu assistente de inteligência artificial especializado
+para empresas portuguesas. Estou aqui para ajudar com análise de documentos,
+gestão empresarial, cálculos financeiros e automatização de tarefas.
+Em que posso ser útil?
+```
+
+Para sair: `/bye`
+
+---
+
+## Verificar a instalação completa
+
+```bash
+# Listar todos os modelos — deve ver o empresaiq
+ollama list
+
+# Ver os detalhes do modelo empresaiq
+ollama show empresaiq
+```
+
+---
+
+## Testar via Python
+
+Confirme que o Python consegue comunicar com o modelo:
 
 ```python title="teste_modelo.py"
-from llama_cpp import Llama
+import ollama
 
-print("A carregar modelo... (pode demorar 10-30 segundos)")
-llm = Llama(
-    model_path="./Phi-3-mini-4k-instruct-Q4_K_M.gguf",
-    n_ctx=512,
-    n_threads=4,
-    verbose=False
+resposta = ollama.chat(
+    model='empresaiq',
+    messages=[
+        {'role': 'user', 'content': 'Que tipo de tarefas empresariais podes ajudar?'}
+    ]
 )
-
-resposta = llm("Olá! Apresenta-te em português em uma frase.", max_tokens=100)
-print(resposta['choices'][0]['text'])
+print(resposta['message']['content'])
 ```
 
 Execute com:
@@ -136,44 +175,57 @@ Execute com:
 python teste_modelo.py
 ```
 
-Se o modelo responder em português, tudo está a funcionar correctamente.
+---
+
+## Actualizar o modelo EmpresaIQ
+
+Se quiser alterar o prompt de sistema ou os parâmetros, edite o `Modelfile` e recrie:
+
+```bash
+ollama create empresaiq -f Modelfile
+# O modelo antigo é substituído automaticamente
+```
 
 ---
 
-## Modelos alternativos
+## Modelos alternativos no Ollama
 
-Se por algum motivo não conseguir usar o Phi-3-mini, aqui estão alternativas:
+Se tiver hardware diferente, pode usar outra base:
 
-| Modelo | Ficheiro GGUF | RAM | Notas |
+| Base | Comando | RAM | Quando usar |
 |---|---|---|---|
-| **Phi-3-mini (recomendado)** | `Phi-3-mini-4k-instruct-Q4_K_M.gguf` | 2.2 GB | ✅ Escolha principal |
-| Qwen2.5-3B | `Qwen2.5-3B-Instruct-Q4_K_M.gguf` | 2.0 GB | ✅ Excelente português |
-| Gemma 2 2B | `gemma-2-2b-it-Q4_K_M.gguf` | 1.5 GB | Rápido, menos capaz |
-| TinyLlama 1.1B | `tinyllama-1.1b-chat-Q4_K_M.gguf` | 0.7 GB | Muito rápido, respostas básicas |
+| **Qwen2.5-3B** | `FROM qwen2.5:3b` | ~2.5 GB | **✅ Recomendado (8 GB RAM)** |
+| Qwen2.5-1.5B | `FROM qwen2.5:1.5b` | ~1.2 GB | PCs com 4-6 GB RAM |
+| phi4-mini | `FROM phi4-mini` | ~2.5 GB | Alternativa Microsoft |
+| Qwen2.5-7B | `FROM qwen2.5:7b` | ~4.7 GB | 16 GB RAM — mais capaz |
+
+Para mudar a base, altere apenas a linha `FROM` no Modelfile e recrie.
 
 ---
 
 ## Estrutura actual do projecto
 
-Apenas com o que já fizemos:
-
 ```
 empresaiq-agent/
 │
-├── venv/                                       ← ✅ Cap. 6
-├── requirements.txt                            ← ✅ Cap. 7
-└── Phi-3-mini-4k-instruct-Q4_K_M.gguf         ← ✅ Cap. 9 (agora!)
+├── venv/                   ← ✅ Cap. 6
+├── requirements.txt        ← ✅ Cap. 7
+└── Modelfile               ← ✅ Cap. 9 (agora!)
 ```
 
-Faltam apenas os ficheiros Python — as ferramentas e o agente em si. É exactamente isso que vamos construir nos próximos capítulos.
+O Ollama gere os modelos internamente — não existem ficheiros GGUF na pasta do projecto. Tudo está organizado pelo Ollama em `~/.ollama/models/`.
 
 ---
 
 ## Resumo
 
-Neste capítulo descarregámos o cérebro do EmpresaIQ: o ficheiro `Phi-3-mini-4k-instruct-Q4_K_M.gguf`. Com o motor (llama.cpp) e o combustível (modelo GGUF) prontos, podemos começar a construir o próprio agente.
+Neste capítulo:
+- Percebemos o que é um **Ollama Modelfile** e como personaliza um modelo
+- Criámos o ficheiro `Modelfile` com a identidade e parâmetros do EmpresaIQ
+- Construímos o modelo `empresaiq` com `ollama create`
+- Testámos o modelo interactivamente e via Python
 
-A Parte III do livro começa agora.
+A Parte III do livro começa agora — vamos construir as ferramentas do agente.
 
 ---
 

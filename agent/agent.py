@@ -1,19 +1,21 @@
-"""Agente EmpresaIQ com LangChain ReAct e memória conversacional.
+"""Agente EmpresaIQ com LangGraph ReAct e memória conversacional.
 
 Capítulo 11 — Construção do Agente
 Capítulo 19 — Memória Conversacional
+
+Nota: LangChain 1.x usa LangGraph em vez do AgentExecutor legado.
 """
 
 from __future__ import annotations
 
 import logging
 import sys
+from typing import Any
 
-from langchain.agents import AgentExecutor, create_react_agent
-from langchain.memory import ConversationBufferWindowMemory
-from langchain_core.messages import SystemMessage
-from langchain_core.prompts import PromptTemplate
+from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 from langchain_openai import ChatOpenAI
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.prebuilt import create_react_agent
 
 from config import (
     LLM_API_KEY,
@@ -31,39 +33,22 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# ─── Prompt ReAct ─────────────────────────────────────────────────────────
-# O formato ReAct exige: Thought / Action / Action Input / Observation / Final Answer
-REACT_PROMPT_TEMPLATE = """\
-És o EmpresaIQ, um assistente inteligente especializado em informação \
-sobre empresas portuguesas. Tens acesso a ferramentas que consultam uma base \
-de dados de empresas, insolvências, execuções e análise de risco.
-
-Regras:
-- Responde sempre em português europeu
-- Usa as ferramentas disponíveis para obter informação actualizada
-- Para pesquisar empresas usa pesquisar_empresas
-- Para detalhe de empresa usa detalhe_empresa_nif (precisa de NIF 9 dígitos)
-- Para análise de risco usa risco_empresa
-- Para insolvências usa pesquisar_insolvencias
-- Para execuções usa pesquisar_execucoes
-- Para visão global usa analytics_global
-- Sê conciso mas informativo; usa listas quando apresentas múltiplos resultados
-- Se não encontrares informação, diz-o claramente
-
-Ferramentas disponíveis:
-{tools}
-
-Nomes das ferramentas: {tool_names}
-
-Histórico da conversa:
-{chat_history}
-
-Pergunta: {input}
-{agent_scratchpad}"""
-
-REACT_PROMPT = PromptTemplate(
-    input_variables=["tools", "tool_names", "chat_history", "input", "agent_scratchpad"],
-    template=REACT_PROMPT_TEMPLATE,
+# ─── System prompt ────────────────────────────────────────────────────────
+SYSTEM_PROMPT = (
+    "És o EmpresaIQ, um assistente inteligente especializado em informação "
+    "sobre empresas portuguesas. Tens acesso a ferramentas que consultam uma "
+    "base de dados de empresas, insolvências, execuções e análise de risco.\n\n"
+    "Regras:\n"
+    "- Responde sempre em português europeu\n"
+    "- Usa as ferramentas disponíveis para obter informação actualizada\n"
+    "- Para pesquisar empresas usa pesquisar_empresas\n"
+    "- Para detalhe de empresa usa detalhe_empresa_nif (precisa de NIF 9 dígitos)\n"
+    "- Para análise de risco usa risco_empresa\n"
+    "- Para insolvências usa pesquisar_insolvencias\n"
+    "- Para execuções usa pesquisar_execucoes\n"
+    "- Para visão global usa analytics_global\n"
+    "- Sê conciso mas informativo; usa listas quando apresentas múltiplos resultados\n"
+    "- Se não encontrares informação, diz-o claramente"
 )
 
 
@@ -83,49 +68,54 @@ def criar_agente(
     llm: ChatOpenAI | None = None,
     k_mensagens: int = 10,
     verbose: bool = False,
-) -> AgentExecutor:
-    """Cria e devolve o AgentExecutor com memória de janela deslizante.
+) -> Any:
+    """Cria e devolve o grafo ReAct (LangGraph) com memória persistente.
 
     Args:
         llm: LLM a usar (cria um novo se None).
-        k_mensagens: Número de turnos de conversa a manter em memória.
-        verbose: Se True, mostra o raciocínio interno do agente.
+        k_mensagens: não usado directamente — LangGraph guarda todo o histórico
+                     na thread; o LLM é invocado apenas com o contexto recente.
+        verbose: reservado para compatibilidade futura.
     """
     if llm is None:
         llm = criar_llm()
 
-    # Memória de janela — mantém os últimos k_mensagens turnos (cap. 19)
-    memory = ConversationBufferWindowMemory(
-        k=k_mensagens,
-        memory_key="chat_history",
-        return_messages=False,
-    )
+    # MemorySaver mantém o histórico em RAM por thread_id (cap. 19)
+    memory = MemorySaver()
 
-    agent = create_react_agent(
-        llm=llm,
+    # create_react_agent do LangGraph substitui o AgentExecutor
+    agente = create_react_agent(
+        model=llm,
         tools=TODAS_AS_FERRAMENTAS,
-        prompt=REACT_PROMPT,
+        prompt=SystemMessage(content=SYSTEM_PROMPT),
+        checkpointer=memory,
     )
 
-    executor = AgentExecutor(
-        agent=agent,
-        tools=TODAS_AS_FERRAMENTAS,
-        memory=memory,
-        verbose=verbose,
-        max_iterations=8,
-        handle_parsing_errors=True,
-        early_stopping_method="generate",
-    )
-
-    logger.info("Agente EmpresaIQ pronto com %d ferramentas.", len(TODAS_AS_FERRAMENTAS))
-    return executor
+    logger.info("Agente EmpresaIQ (LangGraph) pronto com %d ferramentas.", len(TODAS_AS_FERRAMENTAS))
+    return agente
 
 
-def conversar(executor: AgentExecutor, mensagem: str) -> str:
-    """Envia uma mensagem ao agente e devolve a resposta."""
+# thread_id por defeito para a sessão de linha de comandos / Gradio
+_DEFAULT_THREAD = "default"
+
+
+def conversar(agente: Any, mensagem: str, thread_id: str = _DEFAULT_THREAD) -> str:
+    """Envia uma mensagem ao agente LangGraph e devolve a resposta em texto.
+
+    O thread_id identifica a conversa — mensagens com o mesmo thread_id
+    partilham histórico (memória conversacional, cap. 19).
+    """
+    config = {"configurable": {"thread_id": thread_id}}
     try:
-        resultado = executor.invoke({"input": mensagem})
-        return resultado.get("output", "Sem resposta.")
+        resultado = agente.invoke(
+            {"messages": [HumanMessage(content=mensagem)]},
+            config=config,
+        )
+        msgs = resultado.get("messages", [])
+        if msgs:
+            ultima = msgs[-1]
+            return getattr(ultima, "content", str(ultima))
+        return "Sem resposta."
     except Exception as exc:
         logger.exception("Erro no agente")
         return f"Ocorreu um erro: {exc}"
@@ -133,9 +123,7 @@ def conversar(executor: AgentExecutor, mensagem: str) -> str:
 
 # ─── Execução directa (linha de comandos) ─────────────────────────────────
 if __name__ == "__main__":
-    import sys
-
-    executor = criar_agente(verbose=True)
+    agente = criar_agente(verbose=True)
     print("EmpresaIQ — Agente Inteligente (escreva 'sair' para terminar)\n")
 
     while True:
@@ -143,7 +131,7 @@ if __name__ == "__main__":
             pergunta = input("Você: ").strip()
         except (KeyboardInterrupt, EOFError):
             print("\nAté logo!")
-            sys.exit(0)
+            raise SystemExit(0)
 
         if pergunta.lower() in {"sair", "exit", "quit"}:
             print("Até logo!")
@@ -152,5 +140,5 @@ if __name__ == "__main__":
         if not pergunta:
             continue
 
-        resposta = conversar(executor, pergunta)
+        resposta = conversar(agente, pergunta)
         print(f"\nEmpresaIQ: {resposta}\n")

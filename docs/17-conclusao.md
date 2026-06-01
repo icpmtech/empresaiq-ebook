@@ -16,11 +16,11 @@ Ao longo deste livro, construiu um agente de inteligência artificial completo q
 
 ```mermaid
 graph TD
-    A["📦 EmpresaIQ — Sistema Completo"] --> B["🔧 llama.cpp"]
+    A["📦 EmpresaIQ — Sistema Completo"] --> B["🔧 Ollama"]
     A --> C["🤖 Agente ReAct"]
     A --> D["🛠️ Ferramentas Python"]
     A --> E["💻 Interface"]
-    B --> F["📄 Modelos GGUF Q4"]
+    B --> F["📄 Modelo empresaiq"]
     C --> G["💾 Memória Conversacional"]
     C --> O["🗒️ Ontologia"]
     D --> H["🌐 Web + Ficheiros + BD"]
@@ -40,7 +40,7 @@ graph TD
 | **Fundamentos** | 1–2 | Porquê IA local é estratégica para empresas portuguesas |
 | **Hardware** | 3–4 | Como escolher modelos para hardware limitado, sem GPU |
 | **Técnica** | 5 | GGUF e quantização — o que acontece dentro do ficheiro |
-| **Setup** | 6–9 | Instalação completa: Python, llama.cpp, modelos |
+| **Setup** | 6–9 | Instalação completa: Python, Ollama, modelo EmpresaIQ |
 | **Construção** | 10–12 | Ferramentas, agente ReAct, optimizações CPU |
 | **Produção** | 13–16 | Interface, automatização, segurança, melhorias |
 | **Avançado** | 17–19 | Qwen2.5, memória, ontologias |
@@ -50,12 +50,12 @@ graph TD
 ## Os quatro pilares do EmpresaIQ
 
 ```
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃  1. MODELO CERTO  →  Phi-3-mini / Qwen2.5    ┃
-┃  2. FORMATO CERTO →  GGUF Q4_K_M             ┃
-┃  3. MOTOR CERTO   →  llama.cpp               ┃
-┃  4. OPTIMIZAÇÃO   →  threads + ctx + temp    ┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃  1. MODELO CERTO  →  empresaiq (Qwen2.5-3B)          ┃
+┃  2. FORMATO CERTO →  Ollama Modelfile                ┃
+┃  3. MOTOR CERTO   →  Ollama (servidor local de IA)   ┃
+┃  4. OPTIMIZAÇÃO   →  OLLAMA_KEEP_ALIVE + num_ctx     ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ```
 
 ---
@@ -79,8 +79,8 @@ graph TD
 │  └────────────────────┬────────────────────┘      │
 │                       ↓                         │
 │  ┌─────────────────────────────────────────┐      │
-│  │   Phi-3-mini / Qwen2.5 Q4_K_M (GGUF)      │      │
-│  │   via llama-cpp-python | Apenas CPU         │      │
+│  │   empresaiq (Qwen2.5-3B) via Ollama         │      │
+│  │   localhost:11434 | Apenas CPU               │      │
 │  └─────────────────────────────────────────┘      │
 │                                                  │
 │  Hardware: 8 GB RAM | CPU | Sem GPU | Sem Cloud  │
@@ -119,11 +119,10 @@ O código, os dados, o modelo — estão todos no seu computador. Não há termo
 
 | Recurso | Link |
 |---|---|
-| llama.cpp | [github.com/ggerganov/llama.cpp](https://github.com/ggerganov/llama.cpp) |
+| Ollama | [ollama.com](https://ollama.com) |
 | LangChain | [python.langchain.com](https://python.langchain.com/) |
-| Phi-3-mini (Microsoft) | [huggingface.co/microsoft/Phi-3-mini-4k-instruct](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct) |
-| Qwen2.5 | [huggingface.co/Qwen](https://huggingface.co/Qwen) |
-| Modelos GGUF | [huggingface.co/bartowski](https://huggingface.co/bartowski) |
+| Qwen2.5 (Alibaba) | [huggingface.co/Qwen](https://huggingface.co/Qwen) |
+| LangChain Ollama | [github.com/langchain-ai/langchain](https://github.com/langchain-ai/langchain) |
 | ChromaDB | [trychroma.com](https://www.trychroma.com/) |
 | Whisper | [github.com/openai/whisper](https://github.com/openai/whisper) |
 | Piper TTS | [github.com/rhasspy/piper](https://github.com/rhasspy/piper) |
@@ -131,8 +130,7 @@ O código, os dados, o modelo — estão todos no seu computador. Não há termo
 ---
 
 *Guia produzido pela **EmpresaIQ** — Inteligência Empresarial & IA*  
-*Versão 1.0 — 2026*
-## O que Construímos
+*Versão 2.0 — 2026*
 
 Ao longo deste guia, construiu um agente inteligente completo que corre **100% localmente** num PC normal com apenas 8 GB de RAM.
 

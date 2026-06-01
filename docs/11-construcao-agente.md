@@ -44,7 +44,7 @@ Este processo repete-se até o agente ter informação suficiente para dar uma *
 Crie um ficheiro chamado `agente_local.py` na pasta `empresaiq-agent/`:
 
 ```python title="agente_local.py"
-from langchain_community.llms import LlamaCpp
+from langchain_ollama import OllamaLLM
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain_core.prompts import PromptTemplate
 
@@ -55,19 +55,17 @@ from tools import (
     calcular_iva
 )
 
-# ─── 1. Carregar o Modelo ──────────────────────────────────────────────────
+# ─── 1. Ligar ao Modelo via Ollama ────────────────────────────────────────
 
-print("⏳ A carregar modelo Phi-3-mini... (pode demorar 10-30 segundos)")
+print("⏳ A ligar ao EmpresaIQ via Ollama...")
 
-llm = LlamaCpp(
-    model_path="./Phi-3-mini-4k-instruct-Q4_K_M.gguf",
-    n_ctx=2048,        # Contexto máximo em tokens
-    n_threads=4,       # Ajuste ao número de núcleos do seu CPU
-    temperature=0.1,   # Baixa = mais preciso e determinístico
-    verbose=False      # True para ver tokens gerados em tempo real
+llm = OllamaLLM(
+    model="empresaiq",                    # Modelo personalizado criado no Cap. 9
+    base_url="http://localhost:11434",    # Endereço padrão do Ollama
+    temperature=0.1,                      # Baixa = mais preciso e determinístico
 )
 
-print("✅ Modelo carregado!")
+print("✅ EmpresaIQ pronto!")
 
 # ─── 2. Definir Ferramentas ─────────────────────────────────────────────────
 
@@ -119,7 +117,7 @@ if __name__ == "__main__":
 
     print("\n" + "="*50)
     print("  AGENTE EMPRESAIQ — IA LOCAL")
-    print("  Modelo: Phi-3-mini Q4 | Apenas CPU")
+    print("  Modelo: empresaiq (Qwen2.5-3B) | Ollama")
     print("="*50)
     print("Escreva 'sair' para terminar.\n")
 
@@ -135,22 +133,20 @@ if __name__ == "__main__":
 
 ## Perceber cada parte do código
 
-### 1. O LlamaCpp — carregar o modelo
+### 1. O OllamaLLM — ligar ao modelo
 
 ```python
-llm = LlamaCpp(
-    model_path="./Phi-3-mini-4k-instruct-Q4_K_M.gguf",
-    n_ctx=2048,    # Tokens de contexto (2048 é suficiente para a maioria das tarefas)
-    n_threads=4,   # Use o número de núcleos físicos do seu CPU
+llm = OllamaLLM(
+    model="empresaiq",                    # Nome do modelo criado com Modelfile
+    base_url="http://localhost:11434",    # Ollama corre localmente
     temperature=0.1,  # Próximo de 0 = mais previsível e preciso
-    verbose=False  # Mude para True se quiser ver o modelo a gerar token a token
 )
 ```
 
 | Parâmetro | Valor Recomendado | O que controla |
 |---|---|---|
-| `n_ctx` | 2048 | Comprimento máximo da conversa (pergunta + resposta) |
-| `n_threads` | Núcleos físicos do CPU | Velocidade de geração |
+| `model` | `"empresaiq"` | Nome do modelo no Ollama (ver `ollama list`) |
+| `base_url` | `"http://localhost:11434"` | Endereço do servidor Ollama |
 | `temperature` | 0.1 | Precisão vs criatividade (0=preciso, 1=criativo) |
 | `max_iterations` | 3 | Número máximo de ciclos Thought/Action |
 
@@ -186,12 +182,12 @@ python agente_local.py
 A primeira vez, vai ver:
 
 ```
-⏳ A carregar modelo Phi-3-mini... (pode demorar 10-30 segundos)
-✅ Modelo carregado!
+⏳ A ligar ao EmpresaIQ via Ollama...
+✅ EmpresaIQ pronto!
 
 ==================================================
   AGENTE EMPRESAIQ — IA LOCAL
-  Modelo: Phi-3-mini Q4 | Apenas CPU
+  Modelo: empresaiq (Qwen2.5-3B) | Ollama
 ==================================================
 Escreva 'sair' para terminar.
 

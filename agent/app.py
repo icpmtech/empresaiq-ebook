@@ -34,15 +34,16 @@ def _get_executor():
 
 def chat(
     mensagem: str,
-    historico: list[tuple[str, str]],
-) -> tuple[str, list[tuple[str, str]]]:
-    """Processa uma mensagem e devolve a resposta do agente."""
+    historico: list[dict],
+) -> tuple[str, list[dict]]:
+    """Processa uma mensagem e devolve a resposta do agente (formato Gradio 6)."""
     if not mensagem.strip():
         return "", historico
 
     executor = _get_executor()
     resposta = conversar(executor, mensagem)
-    historico.append((mensagem, resposta))
+    historico.append({"role": "user", "content": mensagem})
+    historico.append({"role": "assistant", "content": resposta})
     return "", historico
 
 
@@ -121,8 +122,6 @@ def status_api() -> str:
 def construir_interface() -> gr.Blocks:
     with gr.Blocks(
         title="EmpresaIQ — Agente Inteligente",
-        theme=gr.themes.Soft(primary_hue="blue"),
-        css=".gradio-container { max-width: 1200px !important; }",
     ) as demo:
 
         # ── Cabeçalho ──
@@ -171,8 +170,6 @@ def construir_interface() -> gr.Blocks:
                 chatbot = gr.Chatbot(
                     label="EmpresaIQ Chat",
                     height=520,
-                    bubble_full_width=False,
-                    show_copy_button=True,
                 )
 
                 with gr.Row():
@@ -218,4 +215,6 @@ if __name__ == "__main__":
         server_port=7860,
         share=False,
         show_error=True,
+        theme=gr.themes.Soft(primary_hue="blue"),
+        css=".gradio-container { max-width: 1200px !important; }",
     )

@@ -65,7 +65,7 @@ class EmpresaIQClient:
     def login(self) -> None:
         """Autentica na API e guarda os cookies de sessão."""
         resp = self._session.post(
-            f"{self.base_url}/login",
+            f"{self.base_url}/auth/login",
             data={"username": self._username, "password": self._password},
             timeout=10,
         )
@@ -248,6 +248,63 @@ class EmpresaIQClient:
 
     def cross_stats_overview(self) -> dict:
         return self._get("/api/v1/cross-stats/overview")
+
+    # ─── Risco ─────────────────────────────────────────────────────────────
+
+    def risco_empresa(self, nif: str) -> dict:
+        """Obtém a pontuação de risco pre-calculada de uma empresa."""
+        return self._get(f"/api/v1/risk/{nif}")
+
+    def calcular_risco(self, nif: str) -> dict:
+        """Calcula e persiste o risco de uma empresa pelo NIF."""
+        return self._post(f"/api/v1/risk/{nif}/calculate")
+
+    # ─── NIF agregado ──────────────────────────────────────────────────────
+
+    def detalhe_nif(self, nif: str) -> dict:
+        """Dados agregados de um NIF: empresa, risco, insolvências, execuções."""
+        return self._get(f"/api/v1/nif/{nif}")
+
+    # ─── Pesquisa global ───────────────────────────────────────────────────
+
+    def pesquisa_global(
+        self,
+        q: str,
+        source: str = "",
+        distrito: str | None = None,
+        page: int = 1,
+        per: int = 20,
+    ) -> dict:
+        """Pesquisa em todos os índices (empresas, insolvências, execuções, InformaDB)."""
+        return self._get(
+            "/api/v1/search",
+            params=_clean(
+                {
+                    "q": q,
+                    "source": source or None,
+                    "distrito": distrito,
+                    "page": page,
+                    "per": per,
+                }
+            ),
+        )
+
+
+# ─── Singleton ─────────────────────────────────────────────────────────────
+
+_client: EmpresaIQClient | None = None
+
+
+def get_client() -> EmpresaIQClient:
+    """Devolve (ou cria) o cliente singleton EmpresaIQ.
+
+    Reutiliza a mesma sessão HTTP em toda a aplicação para evitar
+    overhead de ligação e re-autenticação desnecessária.
+    """
+    global _client
+    if _client is None:
+        _client = EmpresaIQClient()
+    return _client
 
     def indices_browser(
         self,

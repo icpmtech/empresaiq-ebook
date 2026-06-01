@@ -1,137 +1,250 @@
 ---
 sidebar_position: 8
-title: "8. Instalação do Llama.cpp"
-description: "O motor que faz o EmpresaIQ funcionar — o que é o llama.cpp e como optimizá-lo"
+title: "8. Instalação do Ollama"
+description: "Instalar e configurar o Ollama — o servidor local de IA que alimenta o EmpresaIQ"
 ---
 
-# Instalação do Llama.cpp
+# Instalação do Ollama
 
-> *"O llama.cpp é para os modelos de IA o que um motor é para um carro: você não precisa de perceber como funciona por dentro para conduzir, mas ajuda saber o básico para tirar o máximo partido dele."*
+> *"O Ollama transforma qualquer PC num servidor de inteligência artificial. Um único comando instala tudo, outro comando inicia tudo."*
 
 ---
 
-## O que é o llama.cpp?
+## O que é o Ollama?
 
-O **llama.cpp** é uma biblioteca open source criada por [Georgi Gerganov](https://github.com/ggerganov/llama.cpp) em 2023. É escrita em C++ — uma linguagem de programação extremamente eficiente — e serve como motor para correr modelos GGUF directamente no CPU.
+O **Ollama** é uma ferramenta open source que permite correr modelos de linguagem localmente, de forma simples e eficiente. Em vez de gerir ficheiros GGUF, configurar threads e compilar código C++, o Ollama trata de tudo automaticamente.
 
-Sem o llama.cpp, correr um modelo de linguagem localmente seria lento ou simplesmente impossível num PC normal.
+Do ponto de vista do programador, o Ollama expõe uma **API REST local** (em `localhost:11434`) que o Python chama para gerar respostas. É tão simples como chamar uma API — mas a resposta vem do seu próprio computador.
 
 ```mermaid
-flowchart TD
-    U["👤 Utilizador\nEscreve uma pergunta"] --> PY["🐍 Python\n(LangChain + agente)"]
-    PY --> LCP["🔗 llama-cpp-python\n(Ponte Python↔C++)"]
-    LCP --> LC["⚡ llama.cpp\n(Motor C++)"]
-    LC --> M["🧠 Modelo GGUF\nem disco"]
-    M --> LC
-    LC --> LCP
-    LCP --> PY
-    PY --> U
-    style LC fill:#1D2951,color:#fff
-    style M fill:#E8720C,color:#fff
+graph LR
+    A["🐍 Python\n(agente_local.py)"] -->|"HTTP POST\nlocalhost:11434"| B["🦙 Ollama\nServidor Local"]
+    B --> C["🤖 Modelo\nempreSaIQ"]
+    C -->|"tokens"| B
+    B -->|"resposta"| A
+    style B fill:#1D2951,color:#fff
+    style C fill:#E8720C,color:#fff
 ```
 
-A relação entre os componentes:
-- **Python + LangChain** — define a lógica do agente
-- **llama-cpp-python** — a ponte entre Python e C++
-- **llama.cpp** — o motor que realmente executa o modelo
-- **Modelo GGUF** — os pesos do modelo em disco
+### Vantagens do Ollama sobre a instalação manual
+
+| Abordagem sem Ollama | Com Ollama |
+|---|---|
+| Compilar código C++ (10-15 min) | Instalar em 2 minutos |
+| Gerir ficheiros GGUF manualmente | `ollama pull modelo` |
+| Configurar threads e memória | Automático |
+| Windows: Visual C++ Build Tools obrigatório | Não é necessário |
+| Actualizar: recompilar tudo | `ollama pull modelo` |
 
 ---
 
-## Como foi instalado
+## Passo 1 — Instalar o Ollama
 
-Quando executou `pip install llama-cpp-python` no capítulo anterior, aconteceram duas coisas:
+### Windows
 
-1. O llama.cpp (escrito em C++) foi **compilado** para o seu processador
-2. A ponte Python (`llama-cpp-python`) foi instalada para comunicar com ele
+1. Aceda a **ollama.com**
+2. Clique em **"Download for Windows"**
+3. Execute o instalador (`OllamaSetup.exe`)
+4. O Ollama instala-se e inicia automaticamente em segundo plano
 
-Essa é a razão pela qual a instalação demora mais do que os outros pacotes.
+Verificar a instalação:
+
+```powershell
+ollama --version
+# ollama version 0.x.x
+```
+
+### Linux
+
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+```
+
+O script instala o Ollama e configura-o como serviço systemd (inicia automaticamente com o sistema).
+
+### macOS
+
+```bash
+brew install ollama
+```
+
+Ou descarregue a aplicação directamente de **ollama.com/download/mac**.
 
 ---
 
-## Activar optimizações AVX2 (opcional mas recomendado)
+## Passo 2 — Iniciar o servidor Ollama
 
-Os processadores modernos têm um conjunto de instruções matemáticas especiais chamadas **AVX2** que acelerizam operações numéricas em 30 a 50%. O llama.cpp consegue aproveitar estas instruções se for compilado com esta flag.
-
-### Verificar se o seu CPU suporta AVX2
+No Windows e macOS, o Ollama inicia automaticamente após a instalação. No Linux, pode iniciar manualmente:
 
 ```bash
-# Windows (PowerShell)
-(Get-WmiObject -Class Win32_Processor).Name
-# Processadores Intel Core i3/i5/i7/i9 a partir de 2013 (Haswell)
-# e AMD Ryzen todos os modelos suportam AVX2
-
-# Linux
-grep -m1 avx2 /proc/cpuinfo
-# Se retornar uma linha com texto, tem AVX2
+# Iniciar o servidor (necessário apenas no Linux se não usar systemd)
+ollama serve
 ```
 
-### Recompilar com AVX2
-
-Se o seu CPU suportar AVX2 e quiser o desempenho máximo:
+### Verificar que está a correr
 
 ```bash
-# Windows (PowerShell)
-$env:CMAKE_ARGS = "-DLLAMA_AVX2=on"
-pip install llama-cpp-python==0.2.76 --force-reinstall --no-cache-dir
-
-# Linux / macOS
-CMAKE_ARGS="-DLLAMA_AVX2=on" pip install llama-cpp-python==0.2.76 --force-reinstall
+# Deve responder com a versão e estado
+curl http://localhost:11434/api/version
+# {"version":"0.x.x"}
 ```
 
-:::tip Vale a pena?
-Se já instalou sem esta flag e tudo está a funcionar, pode continuar sem recompilar. A melhoria é real mas não é obrigatória para o EmpresaIQ funcionar bem.
+Ou no PowerShell (Windows):
+
+```powershell
+Invoke-WebRequest http://localhost:11434/api/version | Select-Object -ExpandProperty Content
+```
+
+:::tip O servidor fica em segundo plano
+No Windows e macOS, o Ollama corre em segundo plano como uma aplicação do sistema (aparece na barra de tarefas). Não precisa de manter uma janela de terminal aberta.
 :::
 
 ---
 
-## Testar o motor
+## Passo 3 — Testar com o primeiro modelo
 
-Para confirmar que o llama.cpp está instalado correctamente:
+Vamos verificar que tudo funciona com um teste rápido:
 
 ```bash
-python -c "from llama_cpp import Llama; print('llama.cpp instalado com sucesso!')"
+# Descarregar o Qwen2.5-3B — a base do nosso modelo EmpresaIQ
+ollama pull qwen2.5:3b
 ```
 
-Se aparecer a mensagem `llama.cpp instalado com sucesso!`, está tudo bem.
+O download demora 3-10 minutos (o modelo tem ~2 GB). Verá uma barra de progresso:
+
+```
+pulling manifest
+pulling 66a7f5f28264... ████████████████ 100% 2.0 GB
+pulling 66e83b3c76af... ████████████████ 100%  11 KB
+verifying sha256 digest
+writing manifest
+success
+```
+
+Depois de descarregado, teste interactivamente:
+
+```bash
+ollama run qwen2.5:3b
+>>> Olá! Podes ajudar-me com tarefas empresariais?
+```
+
+Para sair do modo interactivo: `/bye`
 
 ---
 
-## Como o llama.cpp usa o CPU
+## Comandos essenciais do Ollama
 
-Quando o EmpresaIQ gera uma resposta, o llama.cpp usa **múltiplos núcleos do CPU em paralelo**. Mais núcleos = respostas mais rápidas.
+```bash
+# Listar modelos instalados
+ollama list
 
-No código do agente (que vamos escrever no Capítulo 11), configuramos o número de threads:
+# Descarregar um modelo
+ollama pull <modelo>
 
-```python
-llm = LlamaCpp(
-    model_path="./Phi-3-mini-4k-instruct-Q4_K_M.gguf",
-    n_threads=4,   # Usar 4 núcleos do CPU
-    ...            # mais configurações no Cap. 11
-)
+# Correr um modelo interactivamente
+ollama run <modelo>
+
+# Remover um modelo
+ollama rm <modelo>
+
+# Ver informações de um modelo
+ollama show <modelo>
+
+# Ver logs do servidor
+ollama logs
 ```
 
-Como regra geral, use o número de núcleos físicos do seu processador:
+---
 
-| CPU | Núcleos físicos | n_threads recomendado |
+## Configuração do Ollama
+
+O Ollama pode ser configurado através de variáveis de ambiente. As mais úteis:
+
+| Variável | Valor padrão | Descrição |
 |---|---|---|
-| Intel Core i5 (2 cores) | 2 | 2 |
-| Intel Core i5 (4 cores) | 4 | 4 |
-| Intel Core i7 (6 cores) | 6 | 6 |
-| AMD Ryzen 5 (6 cores) | 6 | 6 |
-| AMD Ryzen 7 (8 cores) | 8 | 6-8 |
+| `OLLAMA_HOST` | `127.0.0.1:11434` | Endereço do servidor |
+| `OLLAMA_MODELS` | `~/.ollama/models` | Pasta onde os modelos são guardados |
+| `OLLAMA_NUM_PARALLEL` | `1` | Pedidos simultâneos |
+| `OLLAMA_MAX_LOADED_MODELS` | `1` | Modelos carregados em memória |
+| `OLLAMA_KEEP_ALIVE` | `5m` | Tempo que o modelo permanece em RAM após o último pedido |
+
+Para definir estas variáveis no Windows:
+
+```powershell
+$env:OLLAMA_KEEP_ALIVE = "10m"
+ollama serve
+```
+
+No Linux/macOS:
+
+```bash
+OLLAMA_KEEP_ALIVE=10m ollama serve
+```
+
+---
+
+## Arquitectura do EmpresaIQ com Ollama
+
+Com o Ollama instalado, a arquitectura completa do sistema fica:
+
+```mermaid
+graph TD
+    subgraph PC["🖥️ O Seu PC — 100% Local"]
+        direction TB
+        U["👤 Utilizador"] -->|pergunta| PY
+        PY["🐍 Python\nLangChain + Ferramentas"] -->|"HTTP :11434"| OL
+        OL["🦙 Ollama\nServidor Local"] --> M["🤖 Modelo empresaiq\n(Qwen2.5-3B)"]
+        M -->|resposta| OL
+        OL -->|resposta| PY
+        PY -->|"resposta final"| U
+    end
+    style PC fill:#FFFDF5,stroke:#1D2951,stroke-width:2px
+    style OL fill:#1D2951,color:#fff
+    style M fill:#E8720C,color:#fff
+    style PY fill:#1D2951,color:#fff
+```
+
+---
+
+## Problemas comuns
+
+### ❌ `ollama: command not found`
+
+O Ollama não está no PATH. Reinicie o terminal após a instalação, ou no Linux verifique:
+
+```bash
+which ollama
+# /usr/local/bin/ollama  ← deve estar aqui
+```
+
+### ❌ `Error: listen tcp 127.0.0.1:11434: bind: address already in use`
+
+O Ollama já está a correr. Não precisa de iniciar outro processo — use directamente os comandos `ollama pull`, `ollama run`, etc.
+
+### ❌ `Error: model not found`
+
+Precisa de fazer `ollama pull <modelo>` antes de usar o modelo. Veja a lista de modelos disponíveis em **ollama.com/library**.
+
+### ❌ Sem espaço em disco
+
+Os modelos são guardados em `~/.ollama/models`. Para libertar espaço:
+
+```bash
+ollama rm <modelo-que-nao-usa>
+```
 
 ---
 
 ## Resumo
 
-- O llama.cpp é o motor que corre o modelo GGUF no CPU
-- Já foi instalado como parte do `llama-cpp-python` no capítulo anterior
-- Opcionalmente, pode recompilar com AVX2 para ganhar 30-50% de velocidade
-- No Capítulo 11, configuramos o número de threads para o seu CPU
+Neste capítulo:
+- Instalou o **Ollama** no seu sistema operativo
+- Iniciou o servidor local e verificou que está acessível em `localhost:11434`
+- Descarregou o modelo `qwen2.5:3b` — a base do modelo EmpresaIQ
+- Aprendeu os comandos essenciais para gerir modelos
 
-Agora que o motor está pronto, precisamos do combustível: o modelo de IA. É isso que vamos descarregar no próximo capítulo.
+No próximo capítulo, vamos criar o **modelo EmpresaIQ personalizado** usando um Ollama Modelfile — com identidade, instruções e parâmetros definidos para uso empresarial português.
 
 ---
 
-*Capítulo seguinte: [9. Download do Modelo Phi-3-mini →](./download-modelo)*
+*Capítulo seguinte: [9. Criação do Modelo EmpresaIQ →](./download-modelo)*
