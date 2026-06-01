@@ -1,0 +1,350 @@
+.cover {
+  min-height: 100vh;
+  background: #1D2951;
+  display: flex;
+  align-items: stretch;
+  font-family: 'Oswald', 'Helvetica Neue', Arial, sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Spine strip on the left */
+.spine {
+  width: 56px;
+  background: #E8720C;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.spineText {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Main content area */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+/* Background grid pattern */
+.main::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(232,114,12,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232,114,12,0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+/* ─── Top bar ───────────────────────────────────────────── */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 3rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.publisher {
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+}
+
+.edition {
+  background: rgba(232,114,12,0.15);
+  border: 1px solid rgba(232,114,12,0.4);
+  color: #E8720C;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.8rem;
+  border-radius: 4px;
+}
+
+/* ─── Hero area ─────────────────────────────────────────── */
+.hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3rem 3rem 2rem;
+  position: relative;
+}
+
+/* Decorative circle blur */
+.hero::after {
+  content: '';
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(232,114,12,0.12) 0%, transparent 70%);
+  right: -100px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.category {
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #E8720C;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.category::before {
+  content: '';
+  display: inline-block;
+  width: 32px;
+  height: 2px;
+  background: #E8720C;
+}
+
+.title {
+  font-size: clamp(2.5rem, 5vw, 4.2rem);
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.1;
+  margin: 0 0 1rem;
+  letter-spacing: -0.02em;
+}
+
+.titleAccent {
+  color: #E8720C;
+  display: block;
+}
+
+.subtitle {
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  color: rgba(255,255,255,0.65);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  margin: 0 0 2.5rem;
+  max-width: 600px;
+  font-family: 'Merriweather', Georgia, serif;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+/* ─── Tech stack pills ─────────────────────────────────── */
+.techStack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 3rem;
+}
+
+.tech {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.8);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  padding: 0.35rem 0.9rem;
+  border-radius: 20px;
+  font-family: 'Source Code Pro', monospace;
+}
+
+.tech.highlight {
+  background: rgba(232,114,12,0.2);
+  border-color: rgba(232,114,12,0.5);
+  color: #E8720C;
+  font-weight: 600;
+}
+
+/* ─── CTA buttons ───────────────────────────────────────── */
+.ctas {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.btnPrimary {
+  background: #E8720C;
+  color: #fff !important;
+  border: none;
+  padding: 0.85rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none !important;
+  transition: background 0.2s, transform 0.2s;
+  font-family: 'Oswald', sans-serif;
+}
+
+.btnPrimary:hover {
+  background: #d4660b;
+  transform: translateY(-1px);
+}
+
+.btnSecondary {
+  background: transparent;
+  color: rgba(255,255,255,0.8) !important;
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 0.85rem 2rem;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none !important;
+  transition: border-color 0.2s, color 0.2s;
+  font-family: 'Oswald', sans-serif;
+}
+
+.btnSecondary:hover {
+  border-color: rgba(255,255,255,0.6);
+  color: #fff !important;
+}
+
+/* ─── Stats row ─────────────────────────────────────────── */
+.statsRow {
+  display: flex;
+  gap: 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  margin: 0 3rem;
+}
+
+.stat {
+  flex: 1;
+  padding: 1.5rem 2rem;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  text-align: center;
+}
+
+.stat:last-child {
+  border-right: none;
+}
+
+.statNumber {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #E8720C;
+  line-height: 1;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+}
+
+/* ─── Bottom bar ─────────────────────────────────────────── */
+.bottomBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 3rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.brandLogo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brandIcon {
+  width: 36px;
+  height: 36px;
+  background: #E8720C;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.05em;
+}
+
+.brandName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.05em;
+}
+
+.brandTagline {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.price {
+  text-align: right;
+}
+
+.priceLabel {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  display: block;
+}
+
+.priceValue {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+
+/* ─── Responsive ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .spine {
+    width: 36px;
+  }
+  .spineText {
+    font-size: 0.6rem;
+  }
+  .topBar,
+  .hero,
+  .statsRow,
+  .bottomBar {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  .statsRow {
+    margin: 0 1.5rem;
+    flex-wrap: wrap;
+  }
+  .stat {
+    flex: 1 1 calc(50% - 1px);
+    padding: 1rem;
+  }
+  .title {
+    font-size: 2rem;
+  }
+}
