@@ -1,155 +1,81 @@
 import type {ReactNode} from 'react';
-import clsx from 'clsx';
 import Link from '@docusaurus/Link';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import Heading from '@theme/Heading';
 
-import styles from './index.module.css';
-
-const chapters = [
-  { num: '01', title: 'Introdução', icon: '📘', slug: 'introducao' },
-  { num: '02', title: 'Porque usar IA Local', icon: '🔒', slug: 'porque-ia-local' },
-  { num: '03', title: 'Limitações de Hardware', icon: '💻', slug: 'limitacoes-hardware' },
-  { num: '04', title: 'Escolha do Modelo', icon: '🎯', slug: 'escolha-modelo' },
-  { num: '05', title: 'GGUF e Quantização', icon: '⚡', slug: 'gguf-quantizacao' },
-  { num: '06', title: 'Instalação do Ambiente', icon: '⚙️', slug: 'instalacao-ambiente' },
-  { num: '07', title: 'Configuração do Python', icon: '🐍', slug: 'configuracao-python' },
-  { num: '08', title: 'Instalação do Llama.cpp', icon: '🦙', slug: 'instalacao-llamacpp' },
-  { num: '09', title: 'Download do Modelo', icon: '📥', slug: 'download-modelo' },
-  { num: '10', title: 'Criação das Ferramentas', icon: '🔧', slug: 'criacao-ferramentas' },
-  { num: '11', title: 'Construção do Agente', icon: '🤖', slug: 'construcao-agente' },
-  { num: '12', title: 'Optimizações CPU', icon: '🚀', slug: 'optimizacoes-cpu' },
-  { num: '13', title: 'Interface de Chat', icon: '💬', slug: 'interface-chat' },
-  { num: '14', title: 'Automatização', icon: '⏰', slug: 'automatizacao' },
-  { num: '15', title: 'Segurança e Privacidade', icon: '🛡️', slug: 'seguranca-privacidade' },
-  { num: '16', title: 'Melhorias Futuras', icon: '🌟', slug: 'melhorias-futuras' },
-  { num: '17', title: 'Qwen2.5 no Agente EmpresaIQ', icon: '🧠', slug: 'qwen-agente' },
-  { num: '18', title: 'Memória Conversacional', icon: '💭', slug: 'memoria-conversacional' },
-  { num: '19', title: 'Conclusão', icon: '🏁', slug: 'conclusao' },
-];
-
-function HomepageHeader() {
-  return (
-    <header className={clsx('hero hero--primary', styles.heroBanner)}>
-      <div className="container">
-        <Heading as="h1" className="hero__title">
-          Agentes Inteligentes Locais<br/>com IA Open Source
-        </Heading>
-        <p className="hero__subtitle">
-          Guia Completo EmpresaIQ para PCs com 8 GB RAM e Apenas CPU
-        </p>
-        <p style={{color: 'rgba(255,255,255,0.85)', fontSize: '1.1rem', marginBottom: '2rem'}}>
-          17 capítulos • Código completo • Sem GPU • Sem cloud • Sem custos mensais
-        </p>
-        <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="/docs/introducao">
-            📖 Começar a Ler
-          </Link>
-          <Link
-            className="button button--lg"
-            to="/comprar"
-            style={{background: 'var(--oreilly-orange)', color: '#fff', borderColor: 'transparent', marginLeft: '1rem'}}>
-            🛒 Comprar PDF — €10
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}
-
-function FeatureBadges() {
-  const badges = [
-    { label: '8 GB RAM', desc: 'Hardware acessível' },
-    { label: 'CPU Only', desc: 'Sem GPU necessária' },
-    { label: 'Custo Zero', desc: 'Sem APIs pagas' },
-    { label: '100% Local', desc: 'Dados nunca saem' },
-    { label: 'RGPD Nativo', desc: 'Conformidade total' },
-    { label: 'Open Source', desc: 'Modelos livres' },
-  ];
-  return (
-    <section style={{padding: '3rem 0', background: 'var(--ifm-color-emphasis-100)'}}>
-      <div className="container">
-        <div style={{display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center'}}>
-          {badges.map((b) => (
-            <div key={b.label} style={{
-              background: 'var(--ifm-background-color)',
-              border: '2px solid var(--ifm-color-primary)',
-              borderRadius: '12px',
-              padding: '1rem 1.5rem',
-              textAlign: 'center',
-              minWidth: '130px',
-            }}>
-              <div style={{fontWeight: 'bold', fontSize: '1.1rem', color: 'var(--ifm-color-primary)'}}>{b.label}</div>
-              <div style={{fontSize: '0.85rem', color: 'var(--ifm-color-emphasis-600)'}}>{b.desc}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ChapterGrid() {
-  return (
-    <section style={{padding: '3rem 0'}}>
-      <div className="container">
-        <Heading as="h2" style={{textAlign: 'center', marginBottom: '2rem'}}>
-          Índice de Capítulos
-        </Heading>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-          gap: '1rem',
-        }}>
-          {chapters.map((c) => (
-            <Link key={c.slug} to={`/docs/${c.slug}`} style={{textDecoration: 'none'}}>
-              <div style={{
-                border: '1px solid var(--ifm-color-emphasis-300)',
-                borderRadius: '8px',
-                padding: '1rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.75rem',
-                transition: 'all 0.2s',
-              }}
-              onMouseOver={e => (e.currentTarget.style.borderColor = 'var(--ifm-color-primary)')}
-              onMouseOut={e => (e.currentTarget.style.borderColor = 'var(--ifm-color-emphasis-300)')}
-              >
-                <span style={{fontSize: '1.5rem'}}>{c.icon}</span>
-                <div>
-                  <div style={{fontSize: '0.75rem', color: 'var(--ifm-color-emphasis-500)'}}>Cap. {c.num}</div>
-                  <div style={{fontWeight: '600'}}>{c.title}</div>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+import styles from './capa.module.css';
 
 export default function Home(): ReactNode {
-  const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      title="eBook — Agentes Inteligentes Locais com IA Open Source"
-      description="Guia completo EmpresaIQ para criar agentes IA locais em hardware com 8 GB RAM e apenas CPU">
-      <HomepageHeader />
-      <FeatureBadges />
-      <ChapterGrid />
-      <section style={{padding: '3rem 0', background: 'var(--ifm-color-emphasis-100)', textAlign: 'center'}}>
-        <div className="container">
-          <Heading as="h3">Produzido por EmpresaIQ</Heading>
-          <p>Inteligência Empresarial &amp; IA — Portugal</p>
-          <Link className="button button--primary button--lg" to="/docs/introducao">
-            📖 Começar a Ler
-          </Link>
+      title="EmpresaIQ — Agentes Inteligentes Locais com IA Open Source"
+      description="Guia completo para criar agentes IA locais com Ollama e Qwen2.5-3B em hardware com 8 GB RAM e apenas CPU">
+      <div className={styles.cover}>
+        <div className={styles.spine}>
+          <span className={styles.spineText}>EmpresaIQ • IA Local com Ollama • 2026</span>
         </div>
-      </section>
+        <div className={styles.main}>
+          <div className={styles.topBar}>
+            <span className={styles.publisher}>EmpresaIQ — Inteligência Empresarial &amp; IA</span>
+            <span className={styles.edition}>Versão 2.0 · 2026</span>
+          </div>
+          <div className={styles.hero}>
+            <span className={styles.category}>Guia Técnico Prático</span>
+            <h1 className={styles.title}>
+              Agentes Inteligentes
+              <span className={styles.titleAccent}>com IA Local</span>
+            </h1>
+            <p className={styles.subtitle}>
+              Construa um agente empresarial completo com Ollama e modelos Open Source —
+              sem GPU, sem cloud, sem custos mensais. Apenas o seu PC e 8 GB de RAM.
+            </p>
+            <div className={styles.techStack}>
+              <span className={`${styles.tech} ${styles.highlight}`}>Ollama</span>
+              <span className={`${styles.tech} ${styles.highlight}`}>Qwen2.5-3B</span>
+              <span className={styles.tech}>Python 3.11</span>
+              <span className={styles.tech}>LangChain</span>
+              <span className={styles.tech}>ReAct Agent</span>
+              <span className={styles.tech}>FastAPI</span>
+              <span className={styles.tech}>ChromaDB</span>
+              <span className={styles.tech}>RGPD ✓</span>
+            </div>
+            <div className={styles.ctas}>
+              <Link className={styles.btnPrimary} to="/docs/introducao">
+                📖 Começar a Ler
+              </Link>
+              <Link className={styles.btnSecondary} to="/comprar">
+                🛒 Comprar PDF — €10
+              </Link>
+            </div>
+          </div>
+          <div className={styles.statsRow}>
+            {[
+              { n: '20', l: 'Capítulos' },
+              { n: '8 GB', l: 'RAM suficiente' },
+              { n: '0€', l: 'Custo mensal' },
+              { n: '100%', l: 'Local & Privado' },
+              { n: '3B', l: 'Parâmetros' },
+            ].map(s => (
+              <div key={s.l} className={styles.stat}>
+                <span className={styles.statNumber}>{s.n}</span>
+                <span className={styles.statLabel}>{s.l}</span>
+              </div>
+            ))}
+          </div>
+          <div className={styles.bottomBar}>
+            <div className={styles.brandLogo}>
+              <div className={styles.brandIcon}>EQ</div>
+              <div>
+                <div className={styles.brandName}>EmpresaIQ</div>
+                <div className={styles.brandTagline}>Inteligência Empresarial &amp; IA · Portugal</div>
+              </div>
+            </div>
+            <div className={styles.price}>
+              <span className={styles.priceLabel}>eBook PDF</span>
+              <span className={styles.priceValue}>€10</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </Layout>
   );
 }
