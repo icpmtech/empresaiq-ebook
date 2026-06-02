@@ -38,6 +38,58 @@ const config: Config = {
     mermaid: true,
   },
 
+  headTags: [
+    {
+      tagName: 'link',
+      attributes: {
+        rel: 'manifest',
+        href: '/manifest.webmanifest',
+      },
+    },
+    {
+      tagName: 'link',
+      attributes: {
+        rel: 'apple-touch-icon',
+        href: '/img/empresaiq-book-logo.svg',
+      },
+    },
+    {
+      tagName: 'meta',
+      attributes: {
+        name: 'theme-color',
+        content: '#1D2951',
+      },
+    },
+  ],
+
+  scripts: [
+    {
+      src: '/register-sw.js',
+      defer: true,
+    },
+  ],
+
+  plugins: [
+    function rawMdLoader() {
+      return {
+        name: 'raw-md-loader',
+        configureWebpack() {
+          return {
+            module: {
+              rules: [
+                {
+                  test: /\.md$/,
+                  resourceQuery: /raw/,
+                  type: 'asset/source',
+                },
+              ],
+            },
+          };
+        },
+      };
+    },
+  ],
+
   presets: [
     [
       'classic',

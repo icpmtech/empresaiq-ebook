@@ -7,6 +7,7 @@ const sidebars: SidebarsConfig = {
       label: '📖 Agentes Inteligentes Locais com IA',
       collapsible: false,
       items: [
+        'ai-impactos-custos-industria',
         'introducao',
         'porque-ia-local',
         'limitacoes-hardware',
