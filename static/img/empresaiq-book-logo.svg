@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" fill="none">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1D2951"/>
+      <stop offset="100%" stop-color="#141e3c"/>
+    </linearGradient>
+    <!-- Orange glow -->
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#E8720C" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#E8720C" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Circuit node glow -->
+    <filter id="nodeGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect width="400" height="400" rx="48" fill="url(#bgGrad)"/>
+
+  <!-- Subtle grid pattern -->
+  <g opacity="0.06" stroke="#E8720C" stroke-width="1">
+    <line x1="0" y1="50" x2="400" y2="50"/>
+    <line x1="0" y1="100" x2="400" y2="100"/>
+    <line x1="0" y1="150" x2="400" y2="150"/>
+    <line x1="0" y1="200" x2="400" y2="200"/>
+    <line x1="0" y1="250" x2="400" y2="250"/>
+    <line x1="0" y1="300" x2="400" y2="300"/>
+    <line x1="0" y1="350" x2="400" y2="350"/>
+    <line x1="50" y1="0" x2="50" y2="400"/>
+    <line x1="100" y1="0" x2="100" y2="400"/>
+    <line x1="150" y1="0" x2="150" y2="400"/>
+    <line x1="200" y1="0" x2="200" y2="400"/>
+    <line x1="250" y1="0" x2="250" y2="400"/>
+    <line x1="300" y1="0" x2="300" y2="400"/>
+    <line x1="350" y1="0" x2="350" y2="400"/>
+  </g>
+
+  <!-- Orange accent bar (left spine) -->
+  <rect x="0" y="0" width="18" height="400" rx="4" fill="#E8720C"/>
+  <!-- Round the right corners of the spine bar -->
+  <rect x="0" y="0" width="10" height="400" fill="#E8720C"/>
+
+  <!-- Glow orb behind brain -->
+  <circle cx="200" cy="185" r="120" fill="url(#glow)"/>
+
+  <!-- ─── Brain / neural network icon ─────────────────── -->
+  <!-- Central hexagon (processor) -->
+  <polygon points="200,130 232,148 232,184 200,202 168,184 168,148"
+    fill="none" stroke="#E8720C" stroke-width="2.5" opacity="0.9"/>
+  <polygon points="200,140 222,152 222,176 200,188 178,176 178,152"
+    fill="#E8720C" fill-opacity="0.12" stroke="#E8720C" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- CPU pins from hexagon -->
+  <!-- Top -->
+  <line x1="200" y1="130" x2="200" y2="108" stroke="#E8720C" stroke-width="2" opacity="0.7"/>
+  <!-- Top-right -->
+  <line x1="232" y1="148" x2="250" y2="138" stroke="#E8720C" stroke-width="2" opacity="0.7"/>
+  <!-- Bottom-right -->
+  <line x1="232" y1="184" x2="250" y2="194" stroke="#E8720C" stroke-width="2" opacity="0.7"/>
+  <!-- Bottom -->
+  <line x1="200" y1="202" x2="200" y2="224" stroke="#E8720C" stroke-width="2" opacity="0.7"/>
+  <!-- Bottom-left -->
+  <line x1="168" y1="184" x2="150" y2="194" stroke="#E8720C" stroke-width="2" opacity="0.7"/>
+  <!-- Top-left -->
+  <line x1="168" y1="148" x2="150" y2="138" stroke="#E8720C" stroke-width="2" opacity="0.7"/>
+
+  <!-- Node dots at pin ends -->
+  <circle cx="200" cy="106" r="5" fill="#E8720C" filter="url(#nodeGlow)" opacity="0.9"/>
+  <circle cx="252" cy="137" r="5" fill="#E8720C" filter="url(#nodeGlow)" opacity="0.9"/>
+  <circle cx="252" cy="195" r="5" fill="#E8720C" filter="url(#nodeGlow)" opacity="0.9"/>
+  <circle cx="200" cy="226" r="5" fill="#E8720C" filter="url(#nodeGlow)" opacity="0.9"/>
+  <circle cx="148" cy="195" r="5" fill="#E8720C" filter="url(#nodeGlow)" opacity="0.9"/>
+  <circle cx="148" cy="137" r="5" fill="#E8720C" filter="url(#nodeGlow)" opacity="0.9"/>
+
+  <!-- Outer ring nodes -->
+  <circle cx="200" cy="82" r="7" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.5"/>
+  <circle cx="272" cy="121" r="7" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.5"/>
+  <circle cx="272" cy="211" r="7" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.5"/>
+  <circle cx="200" cy="250" r="7" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.5"/>
+  <circle cx="128" cy="211" r="7" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.5"/>
+  <circle cx="128" cy="121" r="7" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.5"/>
+
+  <!-- Connecting lines outer ring → node dots -->
+  <line x1="200" y1="86" x2="200" y2="101" stroke="#fff" stroke-width="1.5" opacity="0.25"/>
+  <line x1="268" y1="124" x2="257" y2="140" stroke="#fff" stroke-width="1.5" opacity="0.25"/>
+  <line x1="268" y1="208" x2="257" y2="192" stroke="#fff" stroke-width="1.5" opacity="0.25"/>
+  <line x1="200" y1="246" x2="200" y2="231" stroke="#fff" stroke-width="1.5" opacity="0.25"/>
+  <line x1="132" y1="208" x2="143" y2="192" stroke="#fff" stroke-width="1.5" opacity="0.25"/>
+  <line x1="132" y1="124" x2="143" y2="140" stroke="#fff" stroke-width="1.5" opacity="0.25"/>
+
+  <!-- Center text "EQ" inside hexagon -->
+  <text x="200" y="172" text-anchor="middle" dominant-baseline="middle"
+    font-family="'Oswald', 'Helvetica Neue', Arial, sans-serif"
+    font-weight="700" font-size="28" fill="#ffffff" letter-spacing="-1" opacity="0.95">EQ</text>
+
+  <!-- ─── Bottom text block ─────────────────────────────── -->
+  <!-- Orange rule -->
+  <rect x="44" y="278" width="312" height="2.5" rx="1.25" fill="#E8720C" opacity="0.7"/>
+
+  <!-- Title -->
+  <text x="200" y="308" text-anchor="middle"
+    font-family="'Oswald', 'Helvetica Neue', Arial, sans-serif"
+    font-weight="700" font-size="26" fill="#ffffff" letter-spacing="1">EMPRESAIQ</text>
+
+  <!-- Subtitle line 1 -->
+  <text x="200" y="332" text-anchor="middle"
+    font-family="'Oswald', 'Helvetica Neue', Arial, sans-serif"
+    font-weight="400" font-size="13" fill="#E8720C" letter-spacing="3" opacity="0.9">AGENTES INTELIGENTES LOCAIS</text>
+
+  <!-- Subtitle line 2 -->
+  <text x="200" y="353" text-anchor="middle"
+    font-family="Georgia, serif"
+    font-style="italic" font-size="11.5" fill="rgba(255,255,255,0.45)" letter-spacing="1">com Ollama · Qwen2.5 · Python</text>
+
+  <!-- Bottom rule -->
+  <rect x="44" y="368" width="312" height="1" rx="0.5" fill="rgba(255,255,255,0.12)"/>
+
+  <!-- Version -->
+  <text x="200" y="386" text-anchor="middle"
+    font-family="'Source Code Pro', monospace"
+    font-size="10" fill="rgba(255,255,255,0.3)" letter-spacing="2">VERSÃO 2.0 — 2026</text>
+</svg>

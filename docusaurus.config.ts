@@ -7,7 +7,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'EmpresaIQ — Agentes Inteligentes Locais com IA Open Source',
   tagline: 'Guia completo para criar agentes IA locais em hardware com 8 GB RAM e apenas CPU',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/empresaiq-book-logo.svg',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
@@ -64,7 +64,7 @@ const config: Config = {
       title: 'EmpresaIQ',
       logo: {
         alt: 'EmpresaIQ Logo',
-        src: 'img/logo.svg',
+        src: 'img/empresaiq-book-logo.svg',
       },
       items: [
         {

@@ -1,10 +1,12 @@
 import type {ReactNode} from 'react';
 import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
-
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import styles from './capa.module.css';
 
 export default function Home(): ReactNode {
+  const logoUrl = useBaseUrl('/img/empresaiq-book-logo.svg');
+  void logoUrl; // used in footer only
   return (
     <Layout
       title="EmpresaIQ — Agentes Inteligentes Locais com IA Open Source"
@@ -63,7 +65,7 @@ export default function Home(): ReactNode {
           </div>
           <div className={styles.bottomBar}>
             <div className={styles.brandLogo}>
-              <div className={styles.brandIcon}>EQ</div>
+              <img src={logoUrl} alt="EmpresaIQ" style={{ width: '40px', height: '40px', borderRadius: '8px' }}/>
               <div>
                 <div className={styles.brandName}>EmpresaIQ</div>
                 <div className={styles.brandTagline}>Inteligência Empresarial &amp; IA · Portugal</div>
