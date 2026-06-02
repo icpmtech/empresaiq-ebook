@@ -73,7 +73,7 @@ Para IA local, o custo é mais previsível. O investimento inicial depende de qu
 | Intermédio | 32 GB RAM, CPU forte, SSD rápido | Moderado | Melhor fluidez e modelos maiores quantizados |
 | Avançado | GPU com VRAM dedicada | Elevado | Mais velocidade e modelos mais pesados |
 
-:::tip Regra prática
+:::tip 💡 Regra prática
 Se o objetivo for aprendizagem, protótipo e privacidade, uma máquina de escritório já chega para muito. Se quiser throughput elevado, a GPU acelera bastante, mas também aumenta o custo.
 :::
 
@@ -282,7 +282,7 @@ As tendencias mais fortes para os proximos anos:
 4. **Pressao por eficiencia energetica**: watts por token tornam-se metrica de negocio.
 5. **Diversificacao de fornecedores**: AMD, Intel, integradores (SMCI) e OEMs ganham espaco em cenarios de custo.
 
-:::tip Resumo executivo
+:::tip ✅ Resumo executivo
 Se quer previsibilidade de custo e controlo de dados, invista em arquitetura hibrida: IA local para cargas sensiveis e cloud para picos. Isto reduz dependencia e estabiliza o custo total.
 :::
 
