@@ -423,7 +423,16 @@ function tokensToElements(tokens, diagramCache = new Map()) {
 
 function buildCoverPage() {
   return [
-    new Paragraph({ children: [new TextRun({ text: '' })], spacing: { before: 2000 } }),
+    new Paragraph({
+      children: [new TextRun({ text: 'CAPA', bold: true, size: 22, color: BRAND_ORANGE })],
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 200, after: 300 },
+    }),
+    new Paragraph({
+      children: [new TextRun({ text: '' })],
+      border: { bottom: { style: BorderStyle.SINGLE, size: 8, color: BRAND_ORANGE } },
+      spacing: { after: 1800 },
+    }),
     new Paragraph({
       children: [new TextRun({
         text: 'EmpresaIQ',
@@ -454,7 +463,16 @@ function buildCoverPage() {
         font: 'Calibri',
       })],
       alignment: AlignmentType.CENTER,
-      spacing: { after: 2400 },
+      spacing: { after: 900 },
+    }),
+    new Paragraph({
+      children: [new TextRun({
+        text: 'Edição 2026',
+        size: 22,
+        color: BRAND_BLUE,
+      })],
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 1400 },
     }),
     new Paragraph({
       children: [new TextRun({
@@ -474,7 +492,16 @@ function buildCoverPage() {
 function buildBackCoverPage() {
   return [
     new Paragraph({ children: [new PageBreak()] }),
-    new Paragraph({ children: [new TextRun({ text: '' })], spacing: { before: 1600 } }),
+    new Paragraph({
+      children: [new TextRun({ text: 'CONTRACAPA', bold: true, size: 22, color: BRAND_ORANGE })],
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 200, after: 300 },
+    }),
+    new Paragraph({
+      children: [new TextRun({ text: '' })],
+      border: { bottom: { style: BorderStyle.SINGLE, size: 8, color: BRAND_ORANGE } },
+      spacing: { after: 1400 },
+    }),
     new Paragraph({
       children: [new TextRun({
         text: 'EmpresaIQ',
@@ -504,7 +531,16 @@ function buildBackCoverPage() {
         font: 'Calibri',
       })],
       alignment: AlignmentType.CENTER,
-      spacing: { after: 220 },
+      spacing: { after: 600 },
+    }),
+    new Paragraph({
+      children: [new TextRun({
+        text: 'empresa.market-pro.digital',
+        size: 20,
+        color: BRAND_BLUE,
+      })],
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 180 },
     }),
     new Paragraph({
       children: [new TextRun({
