@@ -20,6 +20,7 @@ const DOCS_DIR = path.join(__dirname, '..', 'docs');
 const BASE_OUTPUT = path.join(__dirname, '..', 'EmpresaIQ-eBook.docx');
 
 const DOC_FILES = [
+  '00-ai-impactos-custos-industria.md',
   '01-introducao.md',
   '02-porque-ia-local.md',
   '03-limitacoes-hardware.md',
@@ -470,6 +471,52 @@ function buildCoverPage() {
   ];
 }
 
+function buildBackCoverPage() {
+  return [
+    new Paragraph({ children: [new PageBreak()] }),
+    new Paragraph({ children: [new TextRun({ text: '' })], spacing: { before: 1600 } }),
+    new Paragraph({
+      children: [new TextRun({
+        text: 'EmpresaIQ',
+        bold: true,
+        size: 60,
+        color: BRAND_BLUE,
+        font: 'Calibri',
+      })],
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 200 },
+    }),
+    new Paragraph({
+      children: [new TextRun({
+        text: 'Agentes Inteligentes Locais com IA Open Source',
+        size: 28,
+        color: BRAND_ORANGE,
+        font: 'Calibri',
+      })],
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 180 },
+    }),
+    new Paragraph({
+      children: [new TextRun({
+        text: 'Obrigado por construir uma base de IA mais privada, previsível e controlada.',
+        size: 22,
+        color: '555555',
+        font: 'Calibri',
+      })],
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 220 },
+    }),
+    new Paragraph({
+      children: [new TextRun({
+        text: `© ${new Date().getFullYear()} EmpresaIQ`,
+        size: 18,
+        color: '888888',
+      })],
+      alignment: AlignmentType.CENTER,
+    }),
+  ];
+}
+
 // ────────────────────────────────────────────────────────
 // Main
 // ────────────────────────────────────────────────────────
@@ -534,6 +581,8 @@ async function run() {
 
     console.log(`  ✓ ${filename}`);
   }
+
+  allElements.push(...buildBackCoverPage());
 
   const doc = new Document({
     creator: 'EmpresaIQ',

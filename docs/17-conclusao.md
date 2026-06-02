@@ -1,5 +1,6 @@
 ---
 sidebar_position: 20
+slug: /conclusao
 title: "20. Conclusão"
 description: "O que construiu, o que aprendeu, e para onde vai o EmpresaIQ"
 ---
@@ -49,42 +50,46 @@ graph TD
 
 ## Os quatro pilares do EmpresaIQ
 
-```
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃  1. MODELO CERTO  →  empresaiq (Qwen2.5-3B)          ┃
-┃  2. FORMATO CERTO →  Ollama Modelfile                ┃
-┃  3. MOTOR CERTO   →  Ollama (servidor local de IA)   ┃
-┃  4. OPTIMIZAÇÃO   →  OLLAMA_KEEP_ALIVE + num_ctx     ┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+```mermaid
+flowchart LR
+    A["📦 MODELO CERTO<br/>empresaiq<br/>Qwen2.5-3B"] --> B["📝 FORMATO CERTO<br/>Ollama<br/>Modelfile"]
+    B --> C["⚙️ MOTOR CERTO<br/>Ollama<br/>Servidor Local de IA"]
+    C --> D["⚡ OPTIMIZAÇÃO<br/>OLLAMA_KEEP_ALIVE<br/>+ num_ctx"]
+    
+    style A fill:#1D2951,stroke:#E8720C,stroke-width:2px,color:#fff
+    style B fill:#1D2951,stroke:#E8720C,stroke-width:2px,color:#fff
+    style C fill:#1D2951,stroke:#E8720C,stroke-width:2px,color:#fff
+    style D fill:#E8720C,stroke:#1D2951,stroke-width:2px,color:#fff
 ```
 
 ---
 
 ## Arquitectura final do EmpresaIQ
 
-```
-┌──────────────────────────────────────────────────────┐
-│            AGENTE EMPRESAIQ LOCAL                │
-│                                                  │
-│  ┌──────────────┐  ┌─────────────────────────┐  │
-│  │  Interface   │  │  Ferramentas              │  │
-│  │  Terminal /  │  │  • Portal Base Gov       │  │
-│  │  Web / Voz   │  │  • Portfolio EmpresaIQ   │  │
-│  └─────┬──────┘  │  • [as suas ferramentas]│  │
-│         │             └────────┬────────────────┘  │
-│         └─────────────┬─────────────────┘           │
-│                       ↓                         │
-│  ┌─────────────────────────────────────────┐      │
-│  │   LangChain ReAct Agent (agente_local.py)  │      │
-│  └────────────────────┬────────────────────┘      │
-│                       ↓                         │
-│  ┌─────────────────────────────────────────┐      │
-│  │   empresaiq (Qwen2.5-3B) via Ollama         │      │
-│  │   localhost:11434 | Apenas CPU               │      │
-│  └─────────────────────────────────────────┘      │
-│                                                  │
-│  Hardware: 8 GB RAM | CPU | Sem GPU | Sem Cloud  │
-└──────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph SYS[AGENTE EMPRESAIQ LOCAL]
+        direction TB
+
+        subgraph TOP[ ]
+            direction LR
+            UI["Interface<br/>Terminal / Web / Voz"]
+            TOOLS["Ferramentas<br/>• Portal Base Gov<br/>• Portfolio EmpresaIQ<br/>• as suas ferramentas"]
+        end
+
+        UI --> AGENT["LangChain ReAct Agent<br/>agente_local.py"]
+        TOOLS --> AGENT
+        AGENT --> MODEL["empresaiq (Qwen2.5-3B) via Ollama<br/>localhost:11434 | Apenas CPU"]
+        HW["Hardware: 8 GB RAM | CPU | Sem GPU | Sem Cloud"]
+    end
+
+    style SYS fill:#0f172a,stroke:#E8720C,stroke-width:2px,color:#fff
+    style TOP fill:#111827,stroke:#334155,stroke-width:1px,color:#fff
+    style UI fill:#1D2951,stroke:#E8720C,stroke-width:2px,color:#fff
+    style TOOLS fill:#1D2951,stroke:#E8720C,stroke-width:2px,color:#fff
+    style AGENT fill:#E8720C,stroke:#1D2951,stroke-width:2px,color:#fff,font-weight:bold
+    style MODEL fill:#2E7D32,stroke:#E8720C,stroke-width:2px,color:#fff,font-weight:bold
+    style HW fill:#1D2951,stroke:#E8720C,stroke-width:2px,color:#fff
 ```
 
 ---

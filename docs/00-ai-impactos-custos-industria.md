@@ -1,9 +1,10 @@
 ---
 sidebar_position: 0
-description: "O que é a IA, quanto custa correr modelos localmente, quem lidera a indústria e o impacto económico da adopção"
+title: "0. Introdução ao livro"
+description: "Introdução ao livro com o contexto da IA moderna, os custos de correr modelos localmente e o impacto económico da adopção"
 ---
 
-# IA, Hardware e Impacto Económico
+# Introdução ao livro
 
 > *"A inteligência artificial deixou de ser uma curiosidade técnica: é agora uma infraestrutura estratégica, com custos, dependências e vantagens económicas muito reais."*
 

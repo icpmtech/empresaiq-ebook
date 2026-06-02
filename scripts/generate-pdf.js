@@ -9,11 +9,12 @@ const { PDFDocument } = require('pdf-lib');
 const fs = require('fs');
 const path = require('path');
 
-const BASE_URL = 'http://localhost:3000/docs';
+const BASE_URL = process.env.PDF_BASE_URL || 'http://localhost:3000/docs';
 const OUTPUT_DIR = path.join(__dirname, '..', '.pdf-tmp');
 const FINAL_PDF = path.join(__dirname, '..', 'EmpresaIQ-eBook.pdf');
 
 const CHAPTERS = [
+  { slug: '00-ai-impactos-custos-industria', title: '0. Introdução ao livro' },
   { slug: 'introducao',            title: '1. Introdução' },
   { slug: 'porque-ia-local',       title: '2. Porque usar IA Local' },
   { slug: 'limitacoes-hardware',   title: '3. Limitações de Hardware' },
@@ -56,6 +57,143 @@ const PRINT_CSS = `
   .admonition { page-break-inside: avoid; border: 1px solid #ccc; padding: 1rem; margin: 1rem 0; }
 `;
 
+function buildCoverHtml() {
+  return `
+    <!DOCTYPE html>
+    <html lang="pt">
+      <head>
+        <meta charset="UTF-8" />
+        <style>
+          @page { size: A4; margin: 18mm; }
+          html, body { width: 100%; height: 100%; margin: 0; }
+          body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1D2951 0%, #0F1730 100%);
+            color: #fff;
+            font-family: Arial, Helvetica, sans-serif;
+          }
+          .wrap {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 48px 24px;
+          }
+          .kicker {
+            color: #E8720C;
+            font-size: 18px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 28px;
+          }
+          h1 {
+            font-size: 58px;
+            line-height: 1;
+            margin: 0 0 20px;
+          }
+          .subtitle {
+            font-size: 28px;
+            line-height: 1.25;
+            margin: 0 0 24px;
+            color: #F3C48D;
+          }
+          .tagline {
+            font-size: 18px;
+            line-height: 1.55;
+            color: #E6EAF5;
+          }
+          .footer {
+            margin-top: 44px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.72);
+            letter-spacing: 0.05em;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="wrap">
+          <div class="kicker">EmpresaIQ</div>
+          <h1>Agentes Inteligentes<br/>Locais com IA</h1>
+          <div class="subtitle">Do Zero ao Agente Inteligente</div>
+          <div class="tagline">sem Cloud, sem Custos, sem Limites</div>
+          <div class="footer">© ${new Date().getFullYear()} EmpresaIQ</div>
+        </div>
+      </body>
+    </html>
+  `;
+}
+
+function buildBackCoverHtml() {
+  return `
+    <!DOCTYPE html>
+    <html lang="pt">
+      <head>
+        <meta charset="UTF-8" />
+        <style>
+          @page { size: A4; margin: 18mm; }
+          html, body { width: 100%; height: 100%; margin: 0; }
+          body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #F6F7FB;
+            color: #1D2951;
+            font-family: Arial, Helvetica, sans-serif;
+          }
+          .wrap {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+            padding: 48px 24px;
+          }
+          .kicker {
+            color: #E8720C;
+            font-size: 16px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 22px;
+          }
+          h2 {
+            font-size: 34px;
+            margin: 0 0 18px;
+          }
+          p {
+            font-size: 20px;
+            line-height: 1.55;
+            color: #4B5568;
+            margin: 0;
+          }
+          .footer {
+            margin-top: 44px;
+            font-size: 14px;
+            color: #7A8498;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="wrap">
+          <div class="kicker">Contracapa</div>
+          <h2>O controlo da IA fica consigo</h2>
+          <p>O código, os dados e o modelo ficam no seu computador. A próxima evolução do EmpresaIQ pode crescer consigo, sem depender da cloud.</p>
+          <div class="footer">© ${new Date().getFullYear()} EmpresaIQ</div>
+        </div>
+      </body>
+    </html>
+  `;
+}
+
+async function renderStaticPagePdf(page, html, outputPath) {
+  await page.goto('about:blank', { waitUntil: 'load' });
+  await page.setContent(html, { waitUntil: 'domcontentloaded' });
+  await page.pdf({
+    path: outputPath,
+    format: 'A4',
+    printBackground: true,
+    margin: { top: '15mm', bottom: '15mm', left: '18mm', right: '18mm' },
+  });
+}
+
 async function waitForMermaid(page) {
   try {
     await page.waitForFunction(() => {
@@ -84,6 +222,11 @@ async function run() {
 
   const pdfPaths = [];
 
+  const coverPath = path.join(OUTPUT_DIR, '00-capa.pdf');
+  await renderStaticPagePdf(page, buildCoverHtml(), coverPath);
+  pdfPaths.push(coverPath);
+  console.log('  📄 Capa... ✓');
+
   for (const chapter of CHAPTERS) {
     const url = `${BASE_URL}/${chapter.slug}`;
     process.stdout.write(`  📄 ${chapter.title}...`);
@@ -106,6 +249,11 @@ async function run() {
     pdfPaths.push(pdfPath);
     console.log(' ✓');
   }
+
+  const backCoverPath = path.join(OUTPUT_DIR, 'zz-contracapa.pdf');
+  await renderStaticPagePdf(page, buildBackCoverHtml(), backCoverPath);
+  pdfPaths.push(backCoverPath);
+  console.log('  📄 Contracapa... ✓');
 
   await browser.close();
 
@@ -137,7 +285,7 @@ async function run() {
   const sizeMB = (fs.statSync(FINAL_PDF).size / 1024 / 1024).toFixed(1);
   console.log(`\n✅ PDF gerado com sucesso!`);
   console.log(`   📁 ${FINAL_PDF}`);
-  console.log(`   📊 ${CHAPTERS.length} capítulos · ${sizeMB} MB\n`);
+  console.log(`   📊 ${pdfPaths.length} páginas principais · ${sizeMB} MB\n`);
 }
 
 run().catch(err => {
