@@ -1,0 +1,409 @@
+.pageWrapper {
+  min-height: calc(100vh - 60px);
+  background: #0d1117;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  gap: 1.5rem;
+}
+
+.bookWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  filter: drop-shadow(0 30px 60px rgba(0,0,0,0.7));
+}
+
+/* ── Base page ── */
+.page {
+  background: #fffdf5;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: 'Merriweather', Georgia, serif;
+  color: #1a1a2e;
+}
+
+/* ── Front cover ── */
+.coverFront {
+  background: linear-gradient(160deg, #1D2951 0%, #141e3c 100%);
+  position: relative;
+  color: #fff;
+}
+
+.coverFront::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 8px;
+  background: #E8720C;
+}
+
+.coverFront::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.coverContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 2rem 2.5rem;
+  text-align: center;
+  gap: 0.6rem;
+}
+
+.coverPublisher {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #E8720C;
+  border: 1px solid rgba(232,114,12,0.4);
+  padding: 0.2rem 0.8rem;
+  border-radius: 2px;
+  margin-bottom: 0.5rem;
+}
+
+.coverIconLarge {
+  font-size: 3.5rem;
+  line-height: 1;
+  margin: 0.5rem 0;
+}
+
+.coverTitle {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #fff;
+  margin: 0;
+}
+
+.coverSubtitle {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.6);
+  font-style: italic;
+  margin: 0;
+}
+
+.coverDivider {
+  width: 40px;
+  height: 2px;
+  background: #E8720C;
+  margin: 0.5rem 0;
+}
+
+.coverTech {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.coverTech span {
+  background: rgba(232,114,12,0.15);
+  border: 1px solid rgba(232,114,12,0.4);
+  color: #E8720C;
+  padding: 0.15rem 0.6rem;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-family: 'Source Code Pro', monospace;
+  letter-spacing: 0.05em;
+}
+
+.coverEdition {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-top: 0.5rem;
+}
+
+/* ── Chapter pages ── */
+.chapterPage {
+  background: #fffdf5;
+}
+
+.pageLeft {
+  background: #fffdf5;
+}
+
+.pageRight {
+  background: #fff8f0;
+}
+
+.pageInner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 2rem 1.8rem;
+  position: relative;
+}
+
+.chapterBadge {
+  display: inline-block;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #E8720C;
+  border-bottom: 2px solid #E8720C;
+  padding-bottom: 0.2rem;
+  margin-bottom: 1rem;
+}
+
+.chapterIcon {
+  font-size: 2.2rem;
+  line-height: 1;
+  margin-bottom: 0.6rem;
+}
+
+.chapterTitle {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1D2951;
+  margin: 0 0 1.2rem;
+  line-height: 1.3;
+}
+
+.topicList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.topicList li {
+  font-size: 0.82rem;
+  color: #333;
+  line-height: 1.4;
+  padding-left: 1.1rem;
+  position: relative;
+}
+
+.topicList li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: #E8720C;
+  font-size: 0.7rem;
+  top: 0.05rem;
+}
+
+.pageFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(29,41,81,0.1);
+}
+
+.readLink {
+  font-size: 0.72rem;
+  color: #E8720C;
+  text-decoration: none;
+  font-family: 'Source Code Pro', monospace;
+  letter-spacing: 0.03em;
+  transition: opacity 0.2s;
+}
+
+.readLink:hover {
+  opacity: 0.7;
+  text-decoration: underline;
+}
+
+.pageNum {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.7rem;
+  color: rgba(29,41,81,0.3);
+}
+
+/* ── Back cover ── */
+.coverBack {
+  background: linear-gradient(160deg, #1D2951 0%, #141e3c 100%);
+  position: relative;
+  color: #fff;
+}
+
+.coverBack::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 8px;
+  background: #E8720C;
+}
+
+.coverBackContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 2rem 2.5rem;
+  text-align: center;
+  gap: 0.8rem;
+}
+
+.backIcon {
+  font-size: 2.8rem;
+}
+
+.coverBackContent h2 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.5rem;
+  color: #fff;
+  margin: 0;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.coverBackContent > p {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.55);
+  margin: 0;
+  font-style: italic;
+}
+
+.backStats {
+  display: flex;
+  gap: 1.5rem;
+  margin: 0.5rem 0;
+}
+
+.backStats div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.backStats strong {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.4rem;
+  color: #E8720C;
+  display: block;
+  margin-bottom: 0.1rem;
+}
+
+.backCta {
+  display: inline-block;
+  background: #E8720C;
+  color: #fff;
+  padding: 0.6rem 1.4rem;
+  border-radius: 4px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  margin-top: 0.5rem;
+  transition: background 0.2s;
+}
+
+.backCta:hover {
+  background: #cf6409;
+  color: #fff;
+  text-decoration: none;
+}
+
+.backUrl {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.3);
+  margin: 0;
+  letter-spacing: 0.1em;
+}
+
+/* ── Controls ── */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.navBtn {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #fff;
+  padding: 0.5rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: 'Source Code Pro', monospace;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.navBtn:hover:not(:disabled) {
+  background: rgba(232,114,12,0.2);
+  border-color: #E8720C;
+}
+
+.navBtn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.pageIndicator {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.5);
+  min-width: 180px;
+  text-align: center;
+}
+
+.hint {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.25);
+  font-family: 'Source Code Pro', monospace;
+  letter-spacing: 0.05em;
+}
+
+.loading {
+  color: rgba(255,255,255,0.5);
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.9rem;
+  padding: 4rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 520px) {
+  .coverTitle {
+    font-size: 1.3rem;
+  }
+  .chapterTitle {
+    font-size: 1.1rem;
+  }
+  .controls {
+    gap: 0.8rem;
+  }
+  .navBtn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+  }
+  .pageIndicator {
+    min-width: 120px;
+    font-size: 0.68rem;
+  }
+}

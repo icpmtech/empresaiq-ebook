@@ -74,6 +74,11 @@ const config: Config = {
           label: '📖 eBook',
         },
         {
+          to: '/ler',
+          label: '📚 Ler Online',
+          position: 'left',
+        },
+        {
           to: '/comprar',
           label: '🛒 Comprar PDF — €10',
           position: 'left',
