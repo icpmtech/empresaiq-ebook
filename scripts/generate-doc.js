@@ -37,10 +37,12 @@ const DOC_FILES = [
   '14-automatizacao.md',
   '15-seguranca-privacidade.md',
   '16-melhorias-futuras.md',
-  '17-conclusao.md',
   '18-qwen-agente.md',
   '19-memoria-conversacional.md',
   '20-ontologias.md',
+  '21-openclaw-agentes-locais.md',
+  '22-alucinacoes-fiabilidade-agentes.md',
+  '17-conclusao.md',
 ];
 
 // Brand colours
@@ -48,6 +50,18 @@ const BRAND_BLUE  = '1D2951';
 const BRAND_ORANGE = 'E8720C';
 const CODE_BG     = 'F2F2F2';
 const QUOTE_BG    = 'FFF8F0';
+
+const SITE_TITLE = 'EmpresaIQ — Agentes Inteligentes Locais com IA Open Source';
+const SITE_TAGLINE = 'Guia completo para criar agentes IA locais em hardware com 8 GB RAM e apenas CPU';
+const COVER_PUBLISHER = 'EmpresaIQ — Inteligência Empresarial & IA';
+const COVER_EDITION = 'Versão 2.0 · 2026';
+const COVER_CATEGORY = 'Guia Técnico Prático';
+const COVER_HERO_LINE_1 = 'Agentes Inteligentes';
+const COVER_HERO_LINE_2 = 'com IA Local';
+const COVER_SUBTITLE = 'Construa um agente empresarial completo com Ollama e modelos Open Source — sem GPU, sem cloud, sem custos mensais. Apenas o seu PC e 8 GB de RAM.';
+const COVER_STACK = 'Ollama • Qwen2.5-3B • Python 3.11 • LangChain • ReAct Agent • FastAPI • ChromaDB • RGPD ✓';
+const COVER_STATS = '22 Capítulos • 8 GB RAM suficiente • 0€ Custo mensal • 100% Local & Privado • 3B Parâmetros';
+const COVER_BRAND = 'EmpresaIQ • Inteligência Empresarial & IA · Portugal';
 
 // ────────────────────────────────────────────────────────
 // Mermaid rendering
@@ -423,65 +437,149 @@ function tokensToElements(tokens, diagramCache = new Map()) {
 
 function buildCoverPage() {
   return [
-    new Paragraph({
-      children: [new TextRun({ text: 'CAPA', bold: true, size: 22, color: BRAND_ORANGE })],
-      alignment: AlignmentType.CENTER,
-      spacing: { before: 200, after: 300 },
+    new Paragraph({ children: [new TextRun({ text: '' })], spacing: { before: 560, after: 120 } }),
+    new Table({
+      width: { size: 9000, type: WidthType.DXA },
+      rows: [
+        new TableRow({
+          children: [
+            new TableCell({
+              borders: {
+                top: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+                bottom: { style: BorderStyle.SINGLE, size: 6, color: BRAND_ORANGE },
+                left: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+                right: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+              },
+              children: [new Paragraph({
+                children: [new TextRun({ text: COVER_PUBLISHER, size: 19, color: BRAND_BLUE, font: 'Calibri' })],
+                spacing: { before: 60, after: 120 },
+              })],
+            }),
+            new TableCell({
+              borders: {
+                top: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+                bottom: { style: BorderStyle.SINGLE, size: 6, color: BRAND_ORANGE },
+                left: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+                right: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+              },
+              children: [new Paragraph({
+                children: [new TextRun({ text: COVER_EDITION, size: 19, color: BRAND_ORANGE, font: 'Calibri', bold: true })],
+                alignment: AlignmentType.RIGHT,
+                spacing: { before: 60, after: 120 },
+              })],
+            }),
+          ],
+        }),
+      ],
     }),
-    new Paragraph({
-      children: [new TextRun({ text: '' })],
-      border: { bottom: { style: BorderStyle.SINGLE, size: 8, color: BRAND_ORANGE } },
-      spacing: { after: 1800 },
-    }),
+    new Paragraph({ children: [new TextRun({ text: '' })], spacing: { before: 460, after: 140 } }),
     new Paragraph({
       children: [new TextRun({
-        text: 'EmpresaIQ',
+        text: COVER_CATEGORY,
         bold: true,
-        size: 72,
-        color: BRAND_BLUE,
-        font: 'Calibri',
-      })],
-      alignment: AlignmentType.CENTER,
-      spacing: { after: 240 },
-    }),
-    new Paragraph({
-      children: [new TextRun({
-        text: 'Agente de IA Local para a Sua Empresa',
-        size: 36,
+        size: 20,
         color: BRAND_ORANGE,
         font: 'Calibri',
       })],
       alignment: AlignmentType.CENTER,
-      spacing: { after: 120 },
+      spacing: { after: 160 },
     }),
     new Paragraph({
       children: [new TextRun({
-        text: 'Do Zero ao Agente Inteligente — sem Cloud, sem Custos, sem Limites',
-        size: 24,
-        italics: true,
+        text: COVER_HERO_LINE_1,
+        bold: true,
+        size: 64,
+        color: BRAND_BLUE,
+        font: 'Calibri',
+      })],
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 60 },
+    }),
+    new Paragraph({
+      children: [new TextRun({
+        text: COVER_HERO_LINE_2,
+        bold: true,
+        size: 58,
+        color: BRAND_ORANGE,
+        font: 'Calibri',
+      })],
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 260 },
+    }),
+    new Paragraph({
+      children: [new TextRun({
+        text: COVER_SUBTITLE,
+        size: 21,
         color: '555555',
         font: 'Calibri',
       })],
       alignment: AlignmentType.CENTER,
-      spacing: { after: 900 },
+      spacing: { after: 320 },
     }),
     new Paragraph({
       children: [new TextRun({
-        text: 'Edição 2026',
-        size: 22,
+        text: COVER_STACK,
+        size: 20,
         color: BRAND_BLUE,
+        font: 'Calibri',
       })],
       alignment: AlignmentType.CENTER,
-      spacing: { after: 1400 },
+      spacing: { after: 220 },
+    }),
+    new Paragraph({
+      children: [new TextRun({
+        text: COVER_STATS,
+        size: 18,
+        color: '555555',
+        font: 'Calibri',
+      })],
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 360 },
+    }),
+    new Table({
+      width: { size: 9000, type: WidthType.DXA },
+      rows: [
+        new TableRow({
+          children: [
+            new TableCell({
+              shading: { fill: BRAND_BLUE },
+              children: [new Paragraph({
+                children: [new TextRun({ text: COVER_BRAND, size: 20, color: 'FFFFFF', font: 'Calibri' })],
+                spacing: { before: 160, after: 160 },
+              })],
+            }),
+            new TableCell({
+              shading: { fill: BRAND_ORANGE },
+              children: [new Paragraph({
+                children: [new TextRun({ text: 'eBook PDF · €10', size: 22, color: 'FFFFFF', font: 'Calibri', bold: true })],
+                alignment: AlignmentType.CENTER,
+                spacing: { before: 160, after: 160 },
+              })],
+            }),
+          ],
+        }),
+      ],
+    }),
+    new Paragraph({ children: [new TextRun({ text: '' })], spacing: { before: 420, after: 80 } }),
+    new Paragraph({
+      children: [new TextRun({
+        text: SITE_TITLE,
+        size: 20,
+        color: BRAND_ORANGE,
+        font: 'Calibri',
+      })],
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 110 },
     }),
     new Paragraph({
       children: [new TextRun({
         text: `© ${new Date().getFullYear()} EmpresaIQ`,
-        size: 20,
-        color: '888888',
+        size: 18,
+        color: BRAND_BLUE,
+        font: 'Calibri',
       })],
       alignment: AlignmentType.CENTER,
-      spacing: { after: 200 },
+      spacing: { after: 90 },
     }),
     new Paragraph({
       children: [new PageBreak()],
@@ -492,61 +590,104 @@ function buildCoverPage() {
 function buildBackCoverPage() {
   return [
     new Paragraph({ children: [new PageBreak()] }),
+    new Paragraph({ children: [new TextRun({ text: '' })], spacing: { before: 900, after: 140 } }),
     new Paragraph({
-      children: [new TextRun({ text: 'CONTRACAPA', bold: true, size: 22, color: BRAND_ORANGE })],
+      children: [new TextRun({ text: COVER_PUBLISHER, size: 20, color: BRAND_BLUE, font: 'Calibri' })],
       alignment: AlignmentType.CENTER,
-      spacing: { before: 200, after: 300 },
-    }),
-    new Paragraph({
-      children: [new TextRun({ text: '' })],
-      border: { bottom: { style: BorderStyle.SINGLE, size: 8, color: BRAND_ORANGE } },
-      spacing: { after: 1400 },
+      spacing: { after: 140 },
     }),
     new Paragraph({
       children: [new TextRun({
-        text: 'EmpresaIQ',
+        text: COVER_HERO_LINE_1,
         bold: true,
-        size: 60,
+        size: 56,
         color: BRAND_BLUE,
         font: 'Calibri',
       })],
       alignment: AlignmentType.CENTER,
-      spacing: { after: 200 },
+      spacing: { after: 60 },
     }),
     new Paragraph({
       children: [new TextRun({
-        text: 'Agentes Inteligentes Locais com IA Open Source',
-        size: 28,
+        text: COVER_HERO_LINE_2,
+        bold: true,
+        size: 52,
         color: BRAND_ORANGE,
         font: 'Calibri',
       })],
       alignment: AlignmentType.CENTER,
-      spacing: { after: 180 },
+      spacing: { after: 260 },
     }),
+    new Table({
+      width: { size: 9000, type: WidthType.DXA },
+      rows: [
+        new TableRow({
+          children: [
+            new TableCell({
+              shading: { fill: BRAND_BLUE },
+              children: [
+                new Paragraph({
+                  children: [new TextRun({
+                    text: COVER_SUBTITLE,
+                    size: 22,
+                    color: 'FFFFFF',
+                    font: 'Calibri',
+                  })],
+                  alignment: AlignmentType.CENTER,
+                  spacing: { before: 260, after: 220 },
+                }),
+                new Paragraph({
+                  children: [new TextRun({
+                    text: COVER_STACK,
+                    size: 20,
+                    color: 'F3F4F6',
+                    font: 'Calibri',
+                  })],
+                  alignment: AlignmentType.CENTER,
+                  spacing: { after: 260 },
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    new Paragraph({ children: [new TextRun({ text: '' })], spacing: { before: 620, after: 140 } }),
     new Paragraph({
       children: [new TextRun({
-        text: 'Obrigado por construir uma base de IA mais privada, previsível e controlada.',
-        size: 22,
+        text: COVER_STATS,
+        size: 18,
         color: '555555',
         font: 'Calibri',
       })],
       alignment: AlignmentType.CENTER,
-      spacing: { after: 600 },
+      spacing: { after: 220 },
+    }),
+    new Paragraph({
+      children: [new TextRun({
+        text: SITE_TITLE,
+        size: 20,
+        color: BRAND_ORANGE,
+        font: 'Calibri',
+      })],
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 100 },
     }),
     new Paragraph({
       children: [new TextRun({
         text: 'empresa.market-pro.digital',
         size: 20,
         color: BRAND_BLUE,
+        font: 'Calibri',
       })],
       alignment: AlignmentType.CENTER,
-      spacing: { after: 180 },
+      spacing: { after: 130 },
     }),
     new Paragraph({
       children: [new TextRun({
         text: `© ${new Date().getFullYear()} EmpresaIQ`,
         size: 18,
-        color: '888888',
+        color: BRAND_BLUE,
       })],
       alignment: AlignmentType.CENTER,
     }),

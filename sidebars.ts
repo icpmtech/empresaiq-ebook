@@ -45,6 +45,8 @@ const sidebars: SidebarsConfig = {
         'qwen-agente',
         'memoria-conversacional',
         'ontologias',
+        'openclaw-agentes-locais',
+        'alucinacoes-fiabilidade-agentes',
         'conclusao',
       ],
     },

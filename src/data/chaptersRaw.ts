@@ -20,10 +20,13 @@ import ch17 from '../../docs/17-conclusao.md?raw';
 import ch18 from '../../docs/18-qwen-agente.md?raw';
 import ch19 from '../../docs/19-memoria-conversacional.md?raw';
 import ch20 from '../../docs/20-ontologias.md?raw';
+import ch21 from '../../docs/21-openclaw-agentes-locais.md?raw';
+import ch22 from '../../docs/22-alucinacoes-fiabilidade-agentes.md?raw';
 
 export const rawChapters: string[] = [
   ch01, ch02, ch03, ch04, ch05,
   ch06, ch07, ch08, ch09, ch10,
   ch11, ch12, ch13, ch14, ch15,
-  ch16, ch17, ch18, ch19, ch20,
+  ch16, ch18, ch19, ch20, ch21,
+  ch22, ch17,
 ];

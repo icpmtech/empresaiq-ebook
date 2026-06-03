@@ -34,7 +34,8 @@ const CHAPTERS = [
   { slug: 'qwen-agente',           title: '17. Qwen2.5 no Agente' },
   { slug: 'memoria-conversacional',title: '18. Memória Conversacional' },
   { slug: 'ontologias',            title: '19. Ontologias e Estrutura de Conhecimento' },
-  { slug: 'conclusao',             title: '20. Conclusão' },
+  { slug: 'openclaw-agentes-locais', title: '20. OpenCLAW e Agentes Locais' },
+  { slug: 'conclusao',             title: '21. Conclusão' },
 ];
 
 // CSS injectado para esconder elementos de navegação no PDF

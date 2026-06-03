@@ -1,7 +1,7 @@
 ---
-sidebar_position: 20
+sidebar_position: 21
 slug: /conclusao
-title: "20. Conclusão"
+title: "21. Conclusão"
 description: "O que construiu, o que aprendeu, e para onde vai o EmpresaIQ"
 ---
 
@@ -44,7 +44,7 @@ graph TD
 | **Setup** | 6–9 | Instalação completa: Python, Ollama, modelo EmpresaIQ |
 | **Construção** | 10–12 | Ferramentas, agente ReAct, optimizações CPU |
 | **Produção** | 13–16 | Interface, automatização, segurança, melhorias |
-| **Avançado** | 17–19 | Qwen2.5, memória, ontologias |
+| **Avançado** | 17–20 | Qwen2.5, memória, ontologias, OpenCLAW |
 
 ---
 
