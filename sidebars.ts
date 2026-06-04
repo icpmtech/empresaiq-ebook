@@ -47,6 +47,7 @@ const sidebars: SidebarsConfig = {
         'ontologias',
         'openclaw-agentes-locais',
         'alucinacoes-fiabilidade-agentes',
+        'ollama-ecossistema-inferencia-local',
         'conclusao',
       ],
     },
