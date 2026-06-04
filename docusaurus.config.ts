@@ -131,6 +131,11 @@ const config: Config = {
           position: 'left',
         },
         {
+          to: '/curso',
+          label: '🎓 Curso',
+          position: 'left',
+        },
+        {
           to: '/comprar',
           label: '🛒 Comprar PDF — €10',
           position: 'left',
@@ -138,6 +143,11 @@ const config: Config = {
         {
           to: '/aceder',
           label: '🔑 Aceder',
+          position: 'right',
+        },
+        {
+          to: '/admin',
+          label: '⚙️ Admin',
           position: 'right',
         },
         {
@@ -163,7 +173,8 @@ const config: Config = {
           title: 'eBook PDF',
           items: [
             { label: '🛒 Comprar — €10', to: '/comprar' },
-            { label: '🔑 Aceder com código', to: '/aceder' },
+            { label: '🔑 Aceder com chave', to: '/aceder' },
+            { label: '🎓 Curso', to: '/curso' },
           ],
         },
         {

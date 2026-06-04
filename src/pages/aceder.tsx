@@ -1,23 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import styles from './aceder.module.css';
+import {
+  validateKey,
+  isLoggedIn,
+  getUserName,
+  getUserKey,
+  logout,
+  LS_USER_KEY,
+  LS_USER_NAME,
+} from '../utils/keyUtils';
+import { dbUpsertUser } from '../utils/db';
 
-// The valid access code — change this to rotate access
-const VALID_CODE = 'EMPRESAIQ2026';
 const PDF_URL = '/downloads/empresaiq-ebook.pdf';
 
 export default function Aceder(): React.JSX.Element {
   const [code, setCode] = useState('');
+  const [name, setName] = useState('');
   const [status, setStatus] = useState<'idle' | 'ok' | 'error'>('idle');
+  const [alreadyLoggedIn, setAlreadyLoggedIn] = useState(false);
+  const [savedName, setSavedName] = useState('');
 
-  function verify(e: React.FormEvent) {
+  useEffect(() => {
+    if (isLoggedIn()) {
+      setAlreadyLoggedIn(true);
+      setSavedName(getUserName());
+    }
+  }, []);
+
+  async function verify(e: React.FormEvent) {
     e.preventDefault();
-    if (code.trim().toUpperCase() === VALID_CODE) {
+    if (validateKey(code)) {
+      const key = code.trim().toUpperCase();
+      localStorage.setItem(LS_USER_KEY, key);
+      if (name.trim()) localStorage.setItem(LS_USER_NAME, name.trim());
+      await dbUpsertUser(key, name.trim());
       setStatus('ok');
     } else {
       setStatus('error');
     }
+  }
+
+  function handleLogout() {
+    logout();
+    setAlreadyLoggedIn(false);
+    setStatus('idle');
+    setCode('');
+    setName('');
   }
 
   return (
@@ -31,14 +61,32 @@ export default function Aceder(): React.JSX.Element {
             <div className={styles.icon}>🔑</div>
             <h1 className={styles.title}>Aceder ao eBook</h1>
             <p className={styles.sub}>
-              Introduz o código de acesso que recebeste após o pagamento.
+              Introduz a chave de acesso que recebeste após a compra.
             </p>
+
+            {/* ── Already logged in banner ── */}
+            {alreadyLoggedIn && status !== 'ok' && (
+              <div className={styles.loggedInBanner}>
+                <span>✅ Já estás registado{savedName ? `, ${savedName}` : ''}!</span>
+                <div className={styles.bannerActions}>
+                  <a href={PDF_URL} download="EmpresaIQ-eBook.pdf" className={styles.bannerBtn}>
+                    📥 Descarregar eBook
+                  </a>
+                  <Link to="/curso" className={styles.bannerBtnSecondary}>
+                    🎓 Ir para o Curso
+                  </Link>
+                  <button onClick={handleLogout} className={styles.bannerLogout}>
+                    Sair
+                  </button>
+                </div>
+              </div>
+            )}
 
             {status === 'ok' ? (
               /* ── Success ── */
               <div className={styles.success}>
                 <div className={styles.successIcon}>✅</div>
-                <h2>Código válido!</h2>
+                <h2>Chave válida! Bem-vindo{name ? `, ${name}` : ''}!</h2>
                 <p>O teu eBook está pronto para descarregar.</p>
                 <a
                   href={PDF_URL}
@@ -47,15 +95,30 @@ export default function Aceder(): React.JSX.Element {
                 >
                   📥 Descarregar EmpresaIQ-eBook.pdf
                 </a>
+                <Link to="/curso" className={styles.courseBtn}>
+                  🎓 Aceder ao Curso →
+                </Link>
                 <p className={styles.tip}>
-                  Guarda o ficheiro — o código pode ser usado a qualquer momento.
+                  A tua chave fica guardada neste browser — podes voltar a qualquer momento.
                 </p>
               </div>
             ) : (
               /* ── Form ── */
               <form onSubmit={verify} className={styles.form}>
+                <label htmlFor="name" className={styles.label}>
+                  O teu nome (opcional)
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  placeholder="Ex: João Silva"
+                  autoComplete="name"
+                  className={styles.input}
+                />
                 <label htmlFor="code" className={styles.label}>
-                  Código de acesso
+                  Chave de acesso
                 </label>
                 <input
                   id="code"
@@ -65,18 +128,18 @@ export default function Aceder(): React.JSX.Element {
                     setCode(e.target.value);
                     setStatus('idle');
                   }}
-                  placeholder="Ex: EMPRESAIQ2026"
+                  placeholder="Ex: EIQ-A1B2C3-D4E5F6"
                   autoComplete="off"
                   spellCheck={false}
                   className={`${styles.input} ${status === 'error' ? styles.inputError : ''}`}
                 />
                 {status === 'error' && (
                   <p className={styles.errorMsg}>
-                    ❌ Código inválido. Verifica o email de confirmação do PayPal ou <Link to="/comprar">adquire o eBook</Link>.
+                    ❌ Chave inválida. Verifica o email de confirmação ou <Link to="/comprar">adquire o eBook</Link>.
                   </p>
                 )}
                 <button type="submit" className={styles.submitBtn}>
-                  Verificar código →
+                  Verificar chave →
                 </button>
               </form>
             )}

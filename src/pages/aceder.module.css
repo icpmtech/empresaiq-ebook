@@ -203,3 +203,107 @@
 .buyLink:hover {
   text-decoration: underline;
 }
+
+/* ─── Logged-in banner ─────────────────────────────────────────── */
+
+.loggedInBanner {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+[data-theme='dark'] .loggedInBanner {
+  background: #0d2e1a;
+  border-color: #166534;
+}
+
+.loggedInBanner span {
+  color: #166534;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+[data-theme='dark'] .loggedInBanner span {
+  color: #86efac;
+}
+
+.bannerActions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.bannerBtn {
+  background: var(--oreilly-navy, #1d2951);
+  color: #fff !important;
+  border-radius: 6px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: background 0.2s;
+}
+
+.bannerBtn:hover {
+  background: var(--oreilly-orange, #e8720c);
+  color: #fff !important;
+}
+
+.bannerBtnSecondary {
+  background: transparent;
+  color: var(--oreilly-navy, #1d2951) !important;
+  border: 1px solid var(--oreilly-navy, #1d2951);
+  border-radius: 6px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: all 0.2s;
+}
+
+.bannerBtnSecondary:hover {
+  background: var(--oreilly-navy, #1d2951);
+  color: #fff !important;
+}
+
+.bannerLogout {
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 0.82rem;
+  padding: 0.4rem 0;
+  text-decoration: underline;
+}
+
+.bannerLogout:hover {
+  color: #e53e3e;
+}
+
+/* ─── Course button (success state) ───────────────────────────── */
+
+.courseBtn {
+  display: inline-block;
+  padding: 0.75rem 1.8rem;
+  background: var(--oreilly-orange, #e8720c);
+  color: #fff !important;
+  font-family: var(--ifm-heading-font-family);
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 4px;
+  text-decoration: none !important;
+  transition: background 0.2s;
+}
+
+.courseBtn:hover {
+  background: #d06308;
+  color: #fff !important;
+}
+

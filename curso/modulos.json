@@ -1,0 +1,67 @@
+[
+  {
+    "id": 1,
+    "title": "Introdução e Fundamentos",
+    "description": "Porquê IA local, privacidade, hardware necessário e visão geral do EmpresaIQ.",
+    "lessons": [
+      "01-introducao.md",
+      "02-porque-ia-local.md",
+      "03-limitacoes-hardware.md",
+      "04-escolha-modelo.md",
+      "05-gguf-quantizacao.md"
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Preparação do Ambiente",
+    "description": "Instalação do Python, dependências, Ollama e preparação do modelo.",
+    "lessons": [
+      "06-instalacao-ambiente.md",
+      "07-configuracao-python.md",
+      "08-instalacao-llamacpp.md",
+      "09-download-modelo.md"
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Construção do Agente e Ferramentas",
+    "description": "Como criar ferramentas, construir o agente, integrar o padrão ReAct e optimizar o desempenho.",
+    "lessons": [
+      "10-criacao-ferramentas.md",
+      "11-construcao-agente.md",
+      "12-optimizacoes-cpu.md"
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Interfaces, Automatização e Segurança",
+    "description": "Interface de chat, automatização, segurança, privacidade e melhores práticas.",
+    "lessons": [
+      "13-interface-chat.md",
+      "14-automatizacao.md",
+      "15-seguranca-privacidade.md"
+    ]
+  },
+  {
+    "id": 5,
+    "title": "Expansão, Futuro e Ecossistema",
+    "description": "Melhorias futuras, memória, ontologias, OpenCLAW, fiabilidade e ecossistema local de LLMs.",
+    "lessons": [
+      "16-melhorias-futuras.md",
+      "18-qwen-agente.md",
+      "19-memoria-conversacional.md",
+      "20-ontologias.md",
+      "21-openclaw-agentes-locais.md",
+      "22-alucinacoes-fiabilidade-agentes.md",
+      "23-ollama-ecossistema-inferencia-local.md"
+    ]
+  },
+  {
+    "id": 6,
+    "title": "Conclusão e Projeto Final",
+    "description": "Resumo, projeto final e próximos passos.",
+    "lessons": [
+      "17-conclusao.md"
+    ]
+  }
+]

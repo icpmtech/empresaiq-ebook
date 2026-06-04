@@ -1,5 +1,6 @@
 // @ts-nocheck
 // Raw markdown imports — loaded as plain text via webpack asset/source
+import ch00 from '../../docs/00-ai-impactos-custos-industria.md?raw';
 import ch01 from '../../docs/01-introducao.md?raw';
 import ch02 from '../../docs/02-porque-ia-local.md?raw';
 import ch03 from '../../docs/03-limitacoes-hardware.md?raw';
@@ -22,6 +23,7 @@ import ch19 from '../../docs/19-memoria-conversacional.md?raw';
 import ch20 from '../../docs/20-ontologias.md?raw';
 import ch21 from '../../docs/21-openclaw-agentes-locais.md?raw';
 import ch22 from '../../docs/22-alucinacoes-fiabilidade-agentes.md?raw';
+import ch23 from '../../docs/23-ollama-ecossistema-inferencia-local.md?raw';
 
 export const rawChapters: string[] = [
   ch01, ch02, ch03, ch04, ch05,
@@ -30,3 +32,31 @@ export const rawChapters: string[] = [
   ch16, ch18, ch19, ch20, ch21,
   ch22, ch17,
 ];
+
+/** Keyed by lesson slug — used by the course module */
+export const rawBySlug: Record<string, string> = {
+  'ai-impactos-custos-industria': ch00,
+  introducao: ch01,
+  'porque-ia-local': ch02,
+  'limitacoes-hardware': ch03,
+  'escolha-modelo': ch04,
+  'gguf-quantizacao': ch05,
+  'instalacao-ambiente': ch06,
+  'configuracao-python': ch07,
+  'instalacao-llamacpp': ch08,
+  'download-modelo': ch09,
+  'criacao-ferramentas': ch10,
+  'construcao-agente': ch11,
+  'optimizacoes-cpu': ch12,
+  'interface-chat': ch13,
+  automatizacao: ch14,
+  'seguranca-privacidade': ch15,
+  'melhorias-futuras': ch16,
+  conclusao: ch17,
+  'qwen-agente': ch18,
+  'memoria-conversacional': ch19,
+  ontologias: ch20,
+  'openclaw-agentes-locais': ch21,
+  'alucinacoes-fiabilidade-agentes': ch22,
+  'ollama-ecossistema-inferencia-local': ch23,
+};

@@ -4,8 +4,11 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "docusaurus start",
-    "build": "docusaurus build",
+    "copy-sqljs": "node -e \"const fs=require('fs');fs.mkdirSync('static/sqljs',{recursive:true});fs.copyFileSync('node_modules/sql.js/dist/sql-wasm.wasm','static/sqljs/sql-wasm.wasm');fs.copyFileSync('node_modules/sql.js/dist/sql-wasm-browser.wasm','static/sqljs/sql-wasm-browser.wasm')\"",
+    "copy-lessons": "node scripts/copy-lessons.js",
+    "prepare-assets": "npm run copy-sqljs && npm run copy-lessons",
+    "start": "npm run prepare-assets && docusaurus start",
+    "build": "npm run prepare-assets && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
@@ -28,13 +31,15 @@
     "react-dom": "^19.0.0",
     "react-markdown": "^10.1.0",
     "react-pageflip": "^2.0.3",
-    "remark-gfm": "^4.0.1"
+    "remark-gfm": "^4.0.1",
+    "sql.js": "^1.14.1"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.10.1",
     "@docusaurus/tsconfig": "3.10.1",
     "@docusaurus/types": "3.10.1",
     "@types/react": "^19.0.0",
+    "@types/sql.js": "^1.4.11",
     "docx": "^9.7.1",
     "marked": "^18.0.4",
     "pdf-lib": "^1.17.1",
