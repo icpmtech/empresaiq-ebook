@@ -7,7 +7,7 @@
 const {
   Document, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell,
   AlignmentType, WidthType, Packer, PageBreak, BorderStyle,
-  ExternalHyperlink, UnderlineType, ImageRun,
+  ExternalHyperlink, UnderlineType, ImageRun, TableOfContents,
 } = require('docx');
 const { marked } = require('marked');
 const puppeteer = require('puppeteer');
@@ -42,6 +42,7 @@ const DOC_FILES = [
   '20-ontologias.md',
   '21-openclaw-agentes-locais.md',
   '22-alucinacoes-fiabilidade-agentes.md',
+  '23-ollama-ecossistema-inferencia-local.md',
   '17-conclusao.md',
 ];
 
@@ -587,6 +588,26 @@ function buildCoverPage() {
   ];
 }
 
+function buildTocPage() {
+  return [
+    new Paragraph({
+      children: [new TextRun({ text: 'Índice', bold: true, size: 40, color: BRAND_BLUE, font: 'Calibri' })],
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 400, after: 300 },
+    }),
+    new Paragraph({
+      children: [new TextRun({ text: '' })],
+      border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: BRAND_ORANGE } },
+      spacing: { before: 0, after: 200 },
+    }),
+    new TableOfContents('Índice', {
+      hyperlink: true,
+      headingStyleRange: '1-3',
+    }),
+    new Paragraph({ children: [new PageBreak()] }),
+  ];
+}
+
 function buildBackCoverPage() {
   return [
     new Paragraph({ children: [new PageBreak()] }),
@@ -735,7 +756,7 @@ async function run() {
 
   // ── Step 3: build Word document ───────────────────────
   console.log('\n📝 A gerar documento...');
-  const allElements = [...buildCoverPage()];
+  const allElements = [...buildCoverPage(), ...buildTocPage()];
 
   for (const filename of DOC_FILES) {
     const filePath = path.join(DOCS_DIR, filename);
